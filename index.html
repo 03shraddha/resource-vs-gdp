@@ -83,7 +83,7 @@ h1 {
   align-items: flex-start;
 }
 #chart-container {
-  flex: 0 0 60%;
+  flex: 0 0 55%;
   min-width: 0;
 }
 svg#chart {
@@ -110,6 +110,7 @@ svg#chart {
   transition: opacity 0.15s;
 }
 .leg-item.hidden { opacity: 0.3; }
+.leg-item:hover { text-decoration: underline; text-underline-offset: 2px; }
 .leg-dot {
   width: 10px;
   height: 10px;
@@ -119,20 +120,22 @@ svg#chart {
 #table-panel {
   flex: 1;
   min-width: 0;
+  flex-shrink: 1;
   overflow-x: auto;
 }
+
 table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.76rem;
+  font-size: 0.72rem;
 }
 th {
   font-family: var(--mono);
-  font-size: 0.68rem;
+  font-size: 0.64rem;
   text-align: right;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   color: var(--muted);
-  padding: 5px 8px 5px 4px;
+  padding: 4px 6px 4px 3px;
   border-bottom: 1px solid var(--text);
   cursor: pointer;
   white-space: nowrap;
@@ -142,22 +145,24 @@ th:first-child, th:nth-child(2) { text-align: left; }
 th.sorted-asc::after { content: ' ^'; }
 th.sorted-desc::after { content: ' v'; }
 td {
-  padding: 5px 8px 5px 4px;
+  padding: 3px 6px 3px 3px;
   border-bottom: 1px solid var(--border);
   font-family: var(--mono);
-  font-size: 0.74rem;
+  font-size: 0.70rem;
   text-align: right;
   white-space: nowrap;
 }
 td:first-child { text-align: left; }
 td:nth-child(2) { text-align: left; color: var(--muted); }
+#data-table th:first-child,
+#data-table td:first-child { min-width: 120px; }
 tr { cursor: pointer; transition: background 0.1s; }
 tr:hover td { background: var(--highlight); }
 tr.spotlight-row td { background: #f0eeea; }
 .res-tag {
   display: inline-block;
-  font-size: 0.62rem;
-  padding: 1px 5px;
+  font-size: 0.60rem;
+  padding: 1px 3px;
   border: 1px solid var(--border);
   border-radius: 2px;
 }
@@ -192,10 +197,11 @@ tr.spotlight-row td { background: #f0eeea; }
   line-height: 1;
 }
 .dimmed { opacity: 0.08 !important; }
+.hover-highlight td { background: #e8e6e0 !important; }
 @media (max-width: 768px) {
   .main-layout { flex-direction: column; }
   #chart-container { flex: none; width: 100%; }
-  #table-panel { width: 100%; max-height: 320px; overflow-y: auto; }
+  #table-panel { width: 100%; min-width: 0; max-height: 320px; overflow-y: auto; overflow-x: auto; }
   .slider-wrap { margin-left: 0; }
 }
 </style>
@@ -203,24 +209,33 @@ tr.spotlight-row td { background: #f0eeea; }
 <body>
 
 <h1>Resource Extraction and GDP per Capita Trajectories</h1>
-<p class="subtitle">GDP/pc indexed to 100 at extraction start (T=0) &nbsp;|&nbsp; Event time T-20 to T+40 &nbsp;|&nbsp; Maddison 2023 + World Bank WDI &nbsp;|&nbsp; 28 countries</p>
+<p class="subtitle">GDP/pc indexed to 100 at extraction start (T=0) &nbsp;|&nbsp; Event time T-20 to T+60 &nbsp;|&nbsp; Maddison 2023 + World Bank WDI &nbsp;|&nbsp; 28 countries</p>
 
 <div class="controls">
   <div class="filter-group">
     <button class="btn active" id="btn-all" onclick="setFilter('all')">All</button>
     <button class="btn" id="btn-oil" onclick="setFilter('oil')">Oil</button>
     <button class="btn" id="btn-minerals" onclick="setFilter('minerals')">Minerals</button>
+    <button class="btn" id="btn-contrast" onclick="setFilter('contrast')" title="Norway vs Nigeria, Botswana vs Sierra Leone, UAE vs Venezuela, Nauru vs Kazakhstan">Contrast</button>
   </div>
-  <div class="slider-wrap">
-    Post window: T+<span id="slider-label">30</span>
-    <input type="range" id="post-slider" min="10" max="40" value="30" oninput="onSlider(this.value)">
+  <div class="filter-group" style="margin-left:12px;" title="Shift the T=0 extraction start date ±5 years to see how sensitive the CAGRs are to this choice">
+    <span style="font-family:'Courier New',Courier,monospace;font-size:0.68rem;color:#888;margin-right:4px;">T=0 sensitivity:</span>
+    <button class="btn" id="btn-tm5" onclick="setT0Shift(-5)">T−5</button>
+    <button class="btn active" id="btn-t0" onclick="setT0Shift(0)">T=0</button>
+    <button class="btn" id="btn-tp5" onclick="setT0Shift(5)">T+5</button>
   </div>
 </div>
 
 <div class="main-layout">
   <div id="chart-container">
     <svg id="chart" viewBox="0 0 860 460" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div id="slider-row" style="display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:5px;padding-right:24px;font-family:'Courier New',Courier,monospace;font-size:0.70rem;color:#888;">
+      post window: T+<strong id="slider-label">30</strong>
+      <input type="range" id="post-slider" min="10" max="60" value="30" oninput="onSlider(this.value)" style="width:120px;accent-color:#1a1a1a;">
+    </div>
     <div class="legend" id="legend"></div>
+    <p id="legend-hint" style="font-family:'Courier New',Courier,monospace;font-size:0.66rem;color:#bbb;margin-top:5px;">click to toggle &nbsp;|&nbsp; double-click to isolate</p>
+    <p id="uncertainty-hint" style="font-family:'Courier New',Courier,monospace;font-size:0.66rem;color:#bbb;margin-top:3px;">dashed = pre-1990 estimate (Maddison backfill)</p>
     <div id="spotlight-card">
       <button id="spotlight-close" onclick="closeSpotlight()" title="Close">x</button>
       <h3 id="sp-title"></h3>
@@ -232,15 +247,22 @@ tr.spotlight-row td { background: #f0eeea; }
       <thead>
         <tr>
           <th onclick="sortBy('name')">Country</th>
-          <th onclick="sortBy('resource')">Resource</th>
+          <th onclick="sortBy('resource')">Type</th>
           <th onclick="sortBy('t0')">Year</th>
-          <th onclick="sortBy('pre')">Pre-CAGR</th>
-          <th onclick="sortBy('post')">Post-CAGR</th>
-          <th onclick="sortBy('gdp30')">GDP T+W</th>
+          <th onclick="sortBy('pre')" title="Avg annual GDP/person growth in the 10 yrs before extraction started">Before</th>
+          <th onclick="sortBy('post')" title="Avg annual GDP/person growth from extraction start to the slider year">After</th>
+          <th id="gdp-th" onclick="sortBy('gdp30')" title="GDP per person indexed to 100 at extraction start"><span id="gdp-th-text">Index T+30</span></th>
         </tr>
       </thead>
       <tbody id="table-body"></tbody>
     </table>
+    <div style="margin-top:10px;font-family:'Courier New',Courier,monospace;font-size:0.67rem;color:#888;line-height:1.7;border-top:1px solid var(--border);padding-top:8px;">
+      <strong style="color:#555;">Year</strong> — when significant extraction started (T=0)<br>
+      <strong style="color:#555;">Growth Before</strong> — avg annual GDP/person growth in the 10 yrs before extraction<br>
+      <strong style="color:#555;">Growth After</strong> — avg annual GDP/person growth from T=0 to the slider year<br>
+      <strong style="color:#555;">Index</strong> — GDP/person at the slider year, where 100 = the extraction start year<br>
+      <span style="color:#aaa;">Slider (bottom-left) moves the "Growth After" endpoint — drag it to see how trajectories change over time.</span>
+    </div>
   </div>
 </div>
 
@@ -249,9 +271,9 @@ tr.spotlight-row td { background: #f0eeea; }
 // Helpers
 // ---------------------------------------------------------------------------
 function interp(wpts) {
-  // wpts: [[t,v], ...] sorted by t. Returns 61 values for t=-20..+40.
+  // wpts: [[t,v], ...] sorted by t. Returns 81 values for t=-20..+60.
   const out = [];
-  for (let t = -20; t <= 40; t++) {
+  for (let t = -20; t <= 60; t++) {
     let v;
     if (t <= wpts[0][0]) { v = wpts[0][1]; }
     else if (t >= wpts[wpts.length-1][0]) { v = wpts[wpts.length-1][1]; }
@@ -284,88 +306,88 @@ function fmtPct(v) {
 // ---------------------------------------------------------------------------
 const RAW = [
   { name:'Norway',            t0:1971, resource:'oil',
-    wpts:[[-20,57],[-10,74],[0,100],[5,122],[10,149],[15,183],[20,215],[25,250],[30,284],[35,310],[40,332]],
+    wpts:[[-20,57],[-10,74],[0,100],[5,122],[10,149],[15,183],[20,215],[25,250],[30,284],[35,310],[40,332],[45,345],[50,355],[55,358],[60,360]],
     note:"Norway found oil and immediately set up a savings fund instead of spending it all at once. That fund now holds $1.4 trillion -- about $260,000 per citizen, making it the world's largest sovereign wealth fund." },
   { name:'Nigeria',           t0:1958, resource:'oil',
-    wpts:[[-20,74],[-10,86],[0,100],[5,118],[10,148],[15,165],[20,158],[25,138],[30,128],[35,130],[40,124]],
+    wpts:[[-20,74],[-10,86],[0,100],[5,118],[10,148],[15,165],[20,158],[25,138],[30,128],[35,130],[40,124],[45,122],[50,118],[55,115],[60,112]],
     note:"Africa's largest oil producer has been pumping crude since 1958 and somehow still can't keep the lights on. The oil money flowed upward into elite accounts and subsidized petrol that funded a massive black market -- classic resource curse." },
   { name:'Equatorial Guinea', t0:1996, resource:'oil',
-    wpts:[[-20,110],[-10,105],[0,100],[3,200],[6,400],[10,650],[15,780],[20,720],[25,680],[30,640],[35,590],[40,540]],
+    wpts:[[-20,110],[-10,105],[0,100],[3,200],[6,400],[10,650],[15,780],[20,720],[25,680],[30,640],[35,590],[40,540],[45,480],[50,420],[55,360],[60,310]],
     note:"Oil was discovered in 1996 and GDP/pc exploded 40x on paper within a decade. In practice the president's son bought a $35M Malibu mansion -- most people still live on under $2 a day." },
   { name:'Saudi Arabia',      t0:1938, resource:'oil',
-    wpts:[[-20,28],[-10,52],[0,100],[5,168],[10,295],[15,460],[20,580],[25,490],[30,415],[35,480],[40,535]],
+    wpts:[[-20,28],[-10,52],[0,100],[5,168],[10,295],[15,460],[20,580],[25,490],[30,415],[35,480],[40,535],[45,520],[50,480],[55,460],[60,440]],
     note:"When oil was struck in 1938, Saudi Arabia was basically an empty desert with a king and no cash. One family controlled everything, so all petrodollars went into one budget -- they built modern cities from scratch in under 40 years." },
   { name:'Venezuela',         t0:1920, resource:'oil',
-    wpts:[[-20,58],[-10,77],[0,100],[5,150],[10,218],[15,285],[20,338],[25,375],[30,390],[35,352],[40,290]],
+    wpts:[[-20,58],[-10,77],[0,100],[5,150],[10,218],[15,285],[20,338],[25,375],[30,390],[35,352],[40,290],[45,240],[50,155],[55,90],[60,68]],
     note:"Venezuela was South America's richest country by the 1950s, all on oil. Then came a government that nationalized everything, printed money to give it away for free, and discovered you can't do that forever -- now people are leaving by the millions." },
   { name:'Angola',            t0:1975, resource:'oil',
-    wpts:[[-20,88],[-10,96],[0,100],[3,82],[5,68],[10,54],[15,58],[20,78],[25,122],[30,162],[35,195],[40,205]],
+    wpts:[[-20,88],[-10,96],[0,100],[3,82],[5,68],[10,54],[15,58],[20,78],[25,122],[30,162],[35,195],[40,205],[45,210],[50,198],[55,188],[60,178]],
     note:"Angola found oil right as a 27-year civil war started, and the oil money funded both sides. When peace finally came in 2002, the boom was already on -- but most of it stayed near the top." },
   { name:'Indonesia',         t0:1885, resource:'oil',
-    wpts:[[-20,74],[-10,86],[0,100],[5,107],[10,115],[15,122],[20,124],[25,128],[30,126],[35,102],[40,116]],
+    wpts:[[-20,74],[-10,86],[0,100],[5,107],[10,115],[15,122],[20,124],[25,128],[30,126],[35,102],[40,116],[45,118],[50,125],[55,135],[60,145]],
     note:"Indonesia's oil started with Dutch colonial extraction in Sumatra -- the Dutch got rich, Indonesians got very little. After independence, Suharto's 1970s oil boom actually funded schools and food programs, one of the rare cases where resource money reached normal people." },
   { name:'Malaysia',          t0:1910, resource:'oil',
-    wpts:[[-20,68],[-10,83],[0,100],[5,110],[10,120],[15,126],[20,103],[25,118],[30,138],[35,172],[40,220]],
+    wpts:[[-20,68],[-10,83],[0,100],[5,110],[10,120],[15,126],[20,103],[25,118],[30,138],[35,172],[40,220],[45,245],[50,268],[55,285],[60,295]],
     note:"Malaysia used Petronas oil revenues to fund industrialization and pivot into electronics manufacturing. They didn't stay an oil economy -- they used oil money to build something that outlasts the oil." },
   { name:'UAE',               t0:1962, resource:'oil',
-    wpts:[[-20,18],[-10,42],[0,100],[5,295],[10,528],[15,648],[20,708],[25,728],[30,752],[35,788],[40,812]],
+    wpts:[[-20,18],[-10,42],[0,100],[5,295],[10,528],[15,648],[20,708],[25,728],[30,752],[35,788],[40,812],[45,830],[50,845],[55,852],[60,858]],
     note:"Dubai barely had oil so it diversified early; Abu Dhabi had so much it could afford to just sit on it. Together they built a financial hub, tourism hub, and the world's busiest airport -- oil money that actually built something permanent." },
   { name:'Kazakhstan',        t0:1991, resource:'oil',
-    wpts:[[-20,94],[-10,98],[0,100],[3,75],[5,60],[8,65],[10,78],[15,128],[20,175],[25,215],[30,238],[35,252],[40,260]],
+    wpts:[[-20,94],[-10,98],[0,100],[3,75],[5,60],[8,65],[10,78],[15,128],[20,175],[25,215],[30,238],[35,252],[40,260],[45,265],[50,272],[55,278],[60,282]],
     note:"Kazakhstan got independence and oil simultaneously in 1991, then immediately lost 40% of GDP in the transition chaos. The president's family got fabulously wealthy; the country got medium-wealthy -- not Norway, not Nigeria, somewhere in between." },
   { name:'Ghana',             t0:2010, resource:'oil',
-    wpts:[[-20,52],[-10,68],[0,100],[5,126],[10,146],[15,162],[20,172],[25,180],[30,186],[35,192],[40,200]],
+    wpts:[[-20,52],[-10,68],[0,100],[5,126],[10,146],[15,162],[20,172],[25,180],[30,186],[35,192],[40,200],[45,195],[50,198],[55,195],[60,190]],
     note:"Ghana was held up as the responsible African oil story when it struck in 2010 -- democracy, rule of law, good institutions. Ten years later the oil revenues came in smaller than expected and Ghana borrowed heavily against them, ending up deep in debt." },
   { name:'Chad',              t0:2003, resource:'oil',
-    wpts:[[-20,88],[-10,94],[0,100],[2,122],[5,132],[10,128],[15,122],[20,118],[25,114],[30,112],[35,108],[40,105]],
+    wpts:[[-20,88],[-10,94],[0,100],[2,122],[5,132],[10,128],[15,122],[20,118],[25,114],[30,112],[35,108],[40,105],[45,102],[50,99],[55,97],[60,95]],
     note:"The World Bank built Chad a special pipeline with international monitors specifically to route oil revenues into poverty programs. Chad then changed the law, spent the money on weapons, and the World Bank pulled out. Still one of the world's poorest countries." },
   { name:'Libya',             t0:1961, resource:'oil',
-    wpts:[[-20,20],[-10,48],[0,100],[5,285],[10,590],[15,705],[20,625],[25,555],[30,505],[35,295],[40,248]],
+    wpts:[[-20,20],[-10,48],[0,100],[5,285],[10,590],[15,705],[20,625],[25,555],[30,505],[35,295],[40,248],[45,210],[50,185],[55,172],[60,165]],
     note:"In 1960 Libya was the poorest country in Africa; by 1970 it had one of the highest per-capita incomes on Earth -- fastest oil-fueled rise ever recorded. Then Gaddafi showed up, nationalized everything, funded global terrorism, and turned it into a sanctions disaster." },
   { name:'Algeria',           t0:1958, resource:'oil',
-    wpts:[[-20,58],[-10,76],[0,100],[5,122],[10,158],[15,188],[20,202],[25,192],[30,198],[35,218],[40,228]],
+    wpts:[[-20,58],[-10,76],[0,100],[5,122],[10,158],[15,188],[20,202],[25,192],[30,198],[35,218],[40,228],[45,232],[50,228],[55,222],[60,215]],
     note:"Algeria found oil while still fighting France for independence. They used the revenues to build a socialist state that kept everyone employed and the government in power for 60 years -- which also kept them from ever building a real economy." },
   { name:'Ecuador',           t0:1972, resource:'oil',
-    wpts:[[-20,58],[-10,76],[0,100],[5,138],[10,148],[15,158],[20,148],[25,152],[30,168],[35,192],[40,208]],
+    wpts:[[-20,58],[-10,76],[0,100],[5,138],[10,148],[15,158],[20,148],[25,152],[30,168],[35,192],[40,208],[45,215],[50,218],[55,212],[60,208]],
     note:"Ecuador struck oil right as OPEC was jacking up global prices -- perfect timing. They borrowed heavily against future oil income, prices collapsed in the 1980s, and they spent 20 years paying off debt before the cycle started again." },
   { name:'Iran',              t0:1913, resource:'oil',
-    wpts:[[-20,58],[-10,76],[0,100],[5,115],[10,132],[15,148],[20,142],[25,158],[30,172],[35,202],[40,265]],
+    wpts:[[-20,58],[-10,76],[0,100],[5,115],[10,132],[15,148],[20,142],[25,158],[30,172],[35,202],[40,265],[45,278],[50,295],[55,305],[60,312]],
     note:"Iran's oil was discovered by a British company that paid Iran almost nothing, which became so humiliating that Iran nationalized it in 1951. Britain and the US then organized a coup against the prime minister who did it -- Iranian oil is basically the plot of the entire 20th century Middle East." },
   { name:'Iraq',              t0:1934, resource:'oil',
-    wpts:[[-20,52],[-10,73],[0,100],[5,132],[10,168],[15,215],[20,272],[25,292],[30,262],[35,312],[40,342]],
+    wpts:[[-20,52],[-10,73],[0,100],[5,132],[10,168],[15,215],[20,272],[25,292],[30,262],[35,312],[40,342],[45,355],[50,368],[55,375],[60,380]],
     note:"Iraq has the world's fifth-largest proven oil reserves and has been in some form of war, sanctions, or political chaos for 50 years straight. Oil doesn't cause wars but it absolutely makes them worse and longer -- every outside power in Iraq was, at some level, thinking about the oil." },
   { name:'Oman',              t0:1967, resource:'oil',
-    wpts:[[-20,14],[-10,38],[0,100],[3,280],[5,305],[10,558],[15,625],[20,655],[25,672],[30,682],[35,692],[40,702]],
+    wpts:[[-20,14],[-10,38],[0,100],[3,280],[5,305],[10,558],[15,625],[20,655],[25,672],[30,682],[35,692],[40,702],[45,705],[50,698],[55,685],[60,672]],
     note:"Oman's Sultan Qaboos took power in 1970, kicked out his father who had literally banned books and glasses, and used oil money to build a country from scratch in one generation. It's a genuine success story nobody talks about because there's no conflict to write about." },
   { name:'Trinidad & Tobago', t0:1908, resource:'oil',
-    wpts:[[-20,64],[-10,80],[0,100],[5,116],[10,134],[15,150],[20,162],[25,180],[30,196],[35,218],[40,242]],
+    wpts:[[-20,64],[-10,80],[0,100],[5,116],[10,134],[15,150],[20,162],[25,180],[30,196],[35,218],[40,242],[45,248],[50,242],[55,235],[60,228]],
     note:"T&T has been pumping oil since the early 1900s and used it to maintain the Caribbean's highest per-capita income for most of the 20th century. Being a small island helps: oil money actually reaches people when there are fewer people to reach." },
   { name:'Azerbaijan',        t0:1997, resource:'oil',
-    wpts:[[-20,102],[-15,105],[-10,108],[-5,82],[0,100],[3,132],[5,178],[10,282],[15,352],[20,382],[25,402],[30,418],[35,428],[40,432]],
+    wpts:[[-20,102],[-15,105],[-10,108],[-5,82],[0,100],[3,132],[5,178],[10,282],[15,352],[20,382],[25,402],[30,418],[35,428],[40,432],[45,435],[50,438],[55,432],[60,425]],
     note:"Azerbaijan had a huge oil boom in the 2000s and used it to build Baku into a gleaming showcase city with F1 races and Eurovision. Outside Baku the story was less glossy -- classic petro-authoritarianism: make the capital look good on TV." },
   { name:'Colombia',          t0:1921, resource:'oil',
-    wpts:[[-20,63],[-10,79],[0,100],[5,116],[10,132],[15,150],[20,168],[25,184],[30,198],[35,218],[40,242]],
+    wpts:[[-20,63],[-10,79],[0,100],[5,116],[10,132],[15,150],[20,168],[25,184],[30,198],[35,218],[40,242],[45,252],[50,262],[55,268],[60,272]],
     note:"Colombia was never primarily an oil country -- it also had coffee, cocaine, and conflict. Oil gave different factions something to fight over, especially FARC who taxed pipelines like a shadow government collecting royalties." },
   { name:'Bolivia',           t0:1900, resource:'oil',
-    wpts:[[-20,70],[-10,84],[0,100],[5,108],[10,113],[15,119],[20,124],[25,129],[30,132],[35,142],[40,152]],
+    wpts:[[-20,70],[-10,84],[0,100],[5,108],[10,113],[15,119],[20,124],[25,129],[30,132],[35,142],[40,152],[45,158],[50,162],[55,165],[60,168]],
     note:"Bolivia's petroleum is mostly natural gas, and being landlocked means you have to pipe it through hostile neighbors to sell it -- an eternal geopolitical headache. When Evo Morales nationalized in 2006, revenues went up and poverty went down, which is rarer than it should be." },
   { name:'Botswana',          t0:1971, resource:'minerals',
-    wpts:[[-20,38],[-10,62],[0,100],[5,155],[10,228],[15,318],[20,412],[25,492],[30,552],[35,582],[40,602]],
+    wpts:[[-20,38],[-10,62],[0,100],[5,155],[10,228],[15,318],[20,412],[25,492],[30,552],[35,582],[40,602],[45,618],[50,628],[55,632],[60,635]],
     note:"Botswana was one of the world's poorest countries at independence in 1966 -- poorer than Haiti. Then they found diamonds, negotiated a fair deal with De Beers instead of being taken, saved the money, and built real institutions. Now it's middle income." },
   { name:'Zambia',            t0:1928, resource:'minerals',
-    wpts:[[-20,48],[-10,70],[0,100],[5,132],[10,168],[15,184],[20,172],[25,148],[30,122],[35,116],[40,126]],
+    wpts:[[-20,48],[-10,70],[0,100],[5,132],[10,168],[15,184],[20,172],[25,148],[30,122],[35,116],[40,126],[45,128],[50,132],[55,130],[60,128]],
     note:"Zambia is the copper belt. Copper prices go up, Zambia booms; prices collapse, Zambia defaults on its debt. This cycle has repeated multiple times. The Chinese showed up to buy the mines in the 2000s and now Zambia owes China a lot of money." },
   { name:'DRC',               t0:1910, resource:'minerals',
-    wpts:[[-20,38],[-10,62],[0,100],[5,118],[10,136],[15,150],[20,157],[25,146],[30,132],[35,112],[40,102]],
+    wpts:[[-20,38],[-10,62],[0,100],[5,118],[10,136],[15,150],[20,157],[25,146],[30,132],[35,112],[40,102],[45,98],[50,95],[55,93],[60,92]],
     note:"The DRC sits on an estimated $24 trillion in untapped minerals -- probably the most valuable deposit on Earth. It also has one of the weakest states on Earth and has never stopped being exploited since Leopold II turned it into a personal rubber plantation in the 1880s." },
   { name:'Chile',             t0:1870, resource:'minerals',
-    wpts:[[-20,68],[-10,83],[0,100],[5,118],[10,138],[15,157],[20,170],[25,188],[30,202],[35,218],[40,233]],
+    wpts:[[-20,68],[-10,83],[0,100],[5,118],[10,138],[15,157],[20,170],[25,188],[30,202],[35,218],[40,233],[45,248],[50,258],[55,265],[60,270]],
     note:"Chile took copper revenues, put them in a stabilization fund during booms, spent them during busts, and combined that with strong institutions and low corruption. It works -- Chilean copper has funded Latin America's most stable economy for 150 years." },
   { name:'Sierra Leone',      t0:1930, resource:'minerals',
-    wpts:[[-20,63],[-10,79],[0,100],[5,108],[10,116],[15,123],[20,119],[25,113],[30,106],[35,88],[40,95]],
+    wpts:[[-20,63],[-10,79],[0,100],[5,108],[10,116],[15,123],[20,119],[25,113],[30,106],[35,88],[40,95],[45,92],[50,90],[55,92],[60,94]],
     note:"Sierra Leone has diamonds. In the 1990s a rebel group called the RUF funded their entire war with blood diamonds and cut off the hands of civilians in mining regions. The Kimberley Process -- the global system to stop blood diamonds -- exists because of Sierra Leone." },
   { name:'Nauru',             t0:1906, resource:'minerals',
-    wpts:[[-20,18],[-10,42],[0,100],[5,182],[10,325],[15,488],[20,605],[25,712],[30,756],[35,625],[40,182]],
+    wpts:[[-20,18],[-10,42],[0,100],[5,182],[10,325],[15,488],[20,605],[25,712],[30,756],[35,625],[40,182],[45,88],[50,62],[55,45],[60,38]],
     note:"Nauru briefly had one of the highest per-capita incomes on Earth from phosphate. They spent every cent -- built an airline that served almost no one, invested in a London musical that bombed spectacularly, hired advisors who stole millions. When the phosphate ran out, nothing was left." }
 ];
 
@@ -380,20 +402,36 @@ const MIN_COLORS = ['#8c7250','#7a6250','#a07840','#6a4830','#907850','#704830']
 
 // Build processed country objects
 let oilIdx = 0, minIdx = 0;
+const FEATURED = new Set(['Norway','Nigeria','Equatorial Guinea','UAE','Botswana']);
 const COUNTRIES = RAW.map(r => {
   const color = r.resource === 'oil' ? OIL_COLORS[oilIdx++] : MIN_COLORS[minIdx++];
-  return { ...r, gdp: interp(r.wpts), color, visible: true };
+  const tier = r.t0 >= 1990 ? 'A' : r.t0 >= 1960 ? 'B' : 'C';
+  return { ...r, gdp: interp(r.wpts), color, visible: true, featured: FEATURED.has(r.name), tier };
 });
 
 // ---------------------------------------------------------------------------
 // State
 // ---------------------------------------------------------------------------
-let activeFilter = 'all';     // 'all' | 'oil' | 'minerals'
-let postWindow   = 30;        // slider value
-let sortKey      = 'post';
-let sortDir      = -1;        // -1 = desc, 1 = asc
-let isolatedName = null;      // name of isolated country or null
+let activeFilter  = 'all';   // 'all' | 'oil' | 'minerals' | 'contrast'
+let postWindow    = 30;
+let t0Shift       = 0;       // -5, 0, or +5 — shifts the T=0 reference point
+let sortKey       = 'post';
+let sortDir       = -1;
+let isolatedName  = null;
+
+// Countries where GDP/capita is a poor welfare proxy due to elite oil concentration
+const INEQUALITY_FLAGS = new Set([
+  'Equatorial Guinea','Angola','Nigeria','Saudi Arabia','UAE',
+  'Venezuela','Chad','Libya','Kazakhstan','Azerbaijan'
+]);
 let spotlightName = null;
+let hoveredName   = null;
+let contrastMode  = false;
+
+// Curated contrast set: sharpest divergences in the dataset
+const CONTRAST_SET = new Set([
+  'Norway','Nigeria','Botswana','Sierra Leone','UAE','Venezuela','Nauru','Kazakhstan'
+]);
 
 // ---------------------------------------------------------------------------
 // Chart dimensions
@@ -403,12 +441,13 @@ const W = 860, H = 460;
 const CW = W - PAD.left - PAD.right;
 const CH = H - PAD.top  - PAD.bottom;
 
-function xPos(t) { return PAD.left + (t + 20) / 60 * CW; }
+function xPos(t) { return PAD.left + (t + 20) / 80 * CW; }
 function yPos(v, yMax) { return PAD.top + CH - (v / yMax) * CH; }
 
 function visibleCountries() {
   if (activeFilter === 'oil')      return COUNTRIES.filter(c => c.resource === 'oil');
   if (activeFilter === 'minerals') return COUNTRIES.filter(c => c.resource === 'minerals');
+  // contrast: all countries drawn but dimmed; table shows only contrast set
   return COUNTRIES;
 }
 
@@ -449,6 +488,18 @@ function renderChart() {
     fill: 'rgba(90,90,90,0.07)'
   }));
 
+  // Label for shaded band -- placed at bottom to avoid collision with "extraction begins"
+  const bandMidX = (bx1 + bx2) / 2;
+  svg.appendChild(el('text', {
+    x: bandMidX,
+    y: PAD.top + CH - 8,
+    'text-anchor': 'middle',
+    fill: '#bbb',
+    'font-size': '8.5',
+    'font-family': 'Courier New, monospace',
+    'letter-spacing': '0.03em'
+  }, 'transition window'));
+
   // Gridlines (horizontal)
   const gridStep = yMax <= 200 ? 50 : yMax <= 500 ? 100 : yMax <= 1000 ? 200 : 200;
   for (let v = 0; v <= yMax; v += gridStep) {
@@ -476,7 +527,7 @@ function renderChart() {
   }));
 
   // x-axis ticks and labels
-  for (const t of [-20,-10,0,10,20,30,40]) {
+  for (const t of [-20,-10,0,10,20,30,40,50,60]) {
     const x = xPos(t);
     svg.appendChild(el('line', {
       x1: x, y1: PAD.top+CH, x2: x, y2: PAD.top+CH+5,
@@ -508,23 +559,136 @@ function renderChart() {
   }));
 
   // Country lines
+  const endpointCandidates = [];
   for (const c of visible) {
     const isIsolated = isolatedName !== null && c.name !== isolatedName;
     const isSpotlit  = spotlightName === c.name;
-    const opacity = !c.visible ? 0 : isIsolated ? 0.07 : 1;
+    // Featured logic: if no isolation, dim non-featured lines; contrast mode has its own dimming
+    let opacity;
+    if (!c.visible) {
+      opacity = 0;
+    } else if (isIsolated) {
+      opacity = 0.07;
+    } else if (contrastMode) {
+      opacity = CONTRAST_SET.has(c.name) ? 1 : 0.05;
+    } else if (isolatedName === null && !c.featured) {
+      opacity = 0.18;
+    } else {
+      opacity = 1;
+    }
     const sw = isSpotlit ? '2.5' : '1.5';
 
-    const pts = c.gdp.map((v, i) => `${xPos(i-20).toFixed(1)},${yPos(v, yMax).toFixed(1)}`).join(' ');
-    svg.appendChild(el('polyline', {
-      points: pts,
-      fill: 'none',
-      stroke: c.color,
-      'stroke-width': sw,
-      opacity: opacity,
-      'stroke-linejoin': 'round',
-      'stroke-linecap': 'round',
-      style: 'transition:opacity 0.2s'
-    }));
+    // Split line into pre-1990 (dashed) and post-1990 (solid) segments.
+    // Event time t = i - 20; calendar year = c.t0 + t.
+    // Cut at the first t where calendar year >= 1990, i.e. t_cut = 1990 - c.t0.
+    const tCut = 1990 - c.t0; // may be < -20 (nothing dashed) or > 40 (all dashed)
+
+    // Build point strings for each segment (include the boundary point in both so lines connect)
+    const allPts = c.gdp.map((v, i) => ({ t: i - 20, x: xPos(i - 20), y: yPos(v, yMax) }));
+
+    // Pre-1990 segment: t < tCut (dashed, lower opacity)
+    const prePts = allPts.filter(p => p.t <= tCut);
+    // Post-1990 segment: t >= tCut (solid)
+    const postPts = allPts.filter(p => p.t >= tCut);
+
+    // Helper: build SVG path d string from point array
+    function ptsToPath(pts) {
+      if (pts.length === 0) return '';
+      return 'M ' + pts.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' L ');
+    }
+
+    // Shared hover handlers (applied to both segments)
+    function attachHover(elem) {
+      elem.addEventListener('mouseenter', () => {
+        hoveredName = c.name;
+        solidSeg.setAttribute('stroke-width', '3');
+        if (dashedSeg) dashedSeg.setAttribute('stroke-width', '3');
+        highlightTableRow(c.name);
+      });
+      elem.addEventListener('mouseleave', () => {
+        hoveredName = null;
+        const normalSw = spotlightName === c.name ? '2.5' : '1.5';
+        solidSeg.setAttribute('stroke-width', normalSw);
+        if (dashedSeg) dashedSeg.setAttribute('stroke-width', normalSw);
+        highlightTableRow(null);
+      });
+    }
+
+    let dashedSeg = null;
+    if (prePts.length >= 2) {
+      const preOpacity = opacity === 0 ? 0 : opacity * 0.45;
+      dashedSeg = el('path', {
+        d: ptsToPath(prePts),
+        fill: 'none',
+        stroke: c.color,
+        'stroke-width': sw,
+        opacity: preOpacity,
+        'stroke-dasharray': '4,3',
+        'stroke-linejoin': 'round',
+        'stroke-linecap': 'round',
+        style: 'transition:opacity 0.2s',
+        'pointer-events': opacity > 0 ? 'stroke' : 'none'
+      });
+      attachHover(dashedSeg);
+      svg.appendChild(dashedSeg);
+    }
+
+    let solidSeg;
+    if (postPts.length >= 2) {
+      solidSeg = el('path', {
+        d: ptsToPath(postPts),
+        fill: 'none',
+        stroke: c.color,
+        'stroke-width': sw,
+        opacity: opacity,
+        'stroke-linejoin': 'round',
+        'stroke-linecap': 'round',
+        style: 'transition:opacity 0.2s',
+        'pointer-events': opacity > 0 ? 'stroke' : 'none'
+      });
+    } else {
+      // Entire line is pre-1990 — render a solid fallback so line is still visible
+      solidSeg = el('path', {
+        d: ptsToPath(prePts),
+        fill: 'none',
+        stroke: c.color,
+        'stroke-width': sw,
+        opacity: opacity,
+        'stroke-dasharray': '4,3',
+        'stroke-linejoin': 'round',
+        'stroke-linecap': 'round',
+        style: 'transition:opacity 0.2s',
+        'pointer-events': opacity > 0 ? 'stroke' : 'none'
+      });
+    }
+    attachHover(solidSeg);
+    svg.appendChild(solidSeg);
+
+    if (opacity > 0.1) endpointCandidates.push({ name: c.name, color: c.color, val: c.gdp[60] });
+  }
+
+  // Endpoint labels: top 5 + bottom 2 visible trajectories at T+40
+  if (isolatedName === null) {
+    const sorted = [...endpointCandidates].sort((a, b) => b.val - a.val);
+    const labelSet = [...sorted.slice(0, 5), ...sorted.slice(-2)];
+    const seen = new Set();
+    const abbr = n => ({
+      'Equatorial Guinea':'Eq. Guinea','Trinidad & Tobago':'T&T',
+      'Sierra Leone':'Sierra L.','Saudi Arabia':'Saudi Ar.','Kazakhstan':'Kazakh.'
+    }[n] || (n.length > 11 ? n.slice(0, 11) + '.' : n));
+    let lastY = -99;
+    for (const pt of labelSet) {
+      if (seen.has(pt.name)) continue;
+      seen.add(pt.name);
+      let ly = yPos(pt.val, yMax) + 3;
+      if (Math.abs(ly - lastY) < 11) ly = lastY + 11;
+      lastY = ly;
+      svg.appendChild(el('text', {
+        x: xPos(40) + 5, y: ly,
+        fill: pt.color, 'font-size': '8.5', 'font-family': 'Courier New, monospace',
+        'font-weight': 'bold'
+      }, abbr(pt.name)));
+    }
   }
 
   // T=0 baseline (y=100 dotted line)
@@ -555,7 +719,10 @@ function renderLegend() {
   div.innerHTML = '';
   for (const c of visibleCountries()) {
     const item = document.createElement('div');
+    const dimmed = contrastMode && !CONTRAST_SET.has(c.name);
     item.className = 'leg-item' + (c.visible ? '' : ' hidden');
+    item.style.opacity = dimmed ? '0.25' : '';
+    item.title = 'Click to toggle. Double-click to isolate.';
     item.innerHTML = `<span class="leg-dot" style="background:${c.color}"></span><span>${c.name}</span>`;
     item.onclick = (e) => {
       e.stopPropagation();
@@ -572,40 +739,66 @@ function renderLegend() {
     };
     div.appendChild(item);
   }
+  const hint = document.getElementById('legend-hint');
+  if (hint) hint.textContent = isolatedName
+    ? 'double-click again to exit isolation'
+    : 'click to toggle  |  double-click to isolate';
 }
 
 // ---------------------------------------------------------------------------
 // Table
 // ---------------------------------------------------------------------------
 function computePost(gdp, w) {
-  // gdp[20] = T=0 = 100. gdp index = t+20.
-  const idx = 20 + w;
+  // base index shifts with t0Shift; gdp[20] = original T=0
+  const baseIdx = 20 + t0Shift;
+  const idx = baseIdx + w;
   return idx < gdp.length ? gdp[idx] : null;
 }
 
 function computePreCagr(gdp) {
-  // T-20 = gdp[0], T=0 = gdp[20]
-  return cagr(gdp[0], gdp[20], 20);
+  // 10-year window ending at shifted T=0
+  const baseIdx = 20 + t0Shift;
+  return { v: cagr(gdp[baseIdx - 10], gdp[baseIdx], 10), short: true };
 }
 
 function computePostCagr(gdp, w) {
+  const baseIdx = 20 + t0Shift;
+  const v0 = gdp[baseIdx];
   const v1 = computePost(gdp, w);
-  return cagr(100, v1, w);
+  return cagr(v0, v1, w);
+}
+
+function computeIndex(gdp, w) {
+  const baseIdx = 20 + t0Shift;
+  const endIdx = baseIdx + w;
+  if (endIdx >= gdp.length || !gdp[baseIdx]) return null;
+  return gdp[endIdx] / gdp[baseIdx] * 100;
 }
 
 function tableData() {
-  const vis = visibleCountries();
-  return vis.map(c => ({
-    name: c.name,
-    resource: c.resource,
-    t0: c.t0,
-    color: c.color,
-    gdp: c.gdp,
-    pre:   computePreCagr(c.gdp),
-    post:  computePostCagr(c.gdp, postWindow),
-    gdp30: computePost(c.gdp, postWindow),
-    note: c.note
-  }));
+  let vis = visibleCountries();
+  if (contrastMode) vis = vis.filter(c => CONTRAST_SET.has(c.name));
+  return vis.map(c => {
+    const pre = computePreCagr(c.gdp);
+    return {
+      name: c.name, resource: c.resource, t0: c.t0,
+      color: c.color, gdp: c.gdp, tier: c.tier,
+      pre: pre.v, preShort: pre.short,
+      post:  computePostCagr(c.gdp, postWindow),
+      gdp30: computeIndex(c.gdp, postWindow),
+      note: c.note
+    };
+  });
+}
+
+function highlightTableRow(name) {
+  document.querySelectorAll('#table-body tr').forEach(tr => {
+    tr.classList.toggle('hover-highlight', name !== null && tr.dataset.country === name);
+  });
+  if (name) {
+    const target = document.querySelector(`#table-body tr[data-country="${CSS.escape(name)}"]`);
+    if (target) target.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
 }
 
 function renderTable() {
@@ -630,12 +823,16 @@ function renderTable() {
   tbody.innerHTML = '';
   for (const r of rows) {
     const tr = document.createElement('tr');
+    tr.dataset.country = r.name;
     if (r.name === spotlightName) tr.classList.add('spotlight-row');
+    const preStr = r.pre !== null
+      ? fmtPct(r.pre) + (r.preShort ? '<span title="10-year window (T-20 data sparse)" style="color:#aaa;font-size:0.62rem"> 10yr</span>' : '')
+      : '--';
     tr.innerHTML = `
-      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${r.color};margin-right:5px;vertical-align:middle"></span>${r.name}</td>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${r.color};margin-right:5px;vertical-align:middle"></span>${r.name}${INEQUALITY_FLAGS.has(r.name) ? ' <span title="GDP/capita may not reflect living standards — oil revenues concentrated at top" style="color:#c8860a;font-size:0.60rem;cursor:default">⚠</span>' : ''}</td>
       <td><span class="res-tag">${r.resource}</span></td>
       <td>${r.t0}</td>
-      <td>${fmtPct(r.pre)}</td>
+      <td>${preStr}</td>
       <td>${fmtPct(r.post)}</td>
       <td>${r.gdp30 !== null ? r.gdp30.toFixed(1) : '--'}</td>
     `;
@@ -670,10 +867,21 @@ function closeSpotlight() {
 // ---------------------------------------------------------------------------
 // Controls
 // ---------------------------------------------------------------------------
+function setT0Shift(s) {
+  t0Shift = s;
+  ['tm5','t0','tp5'].forEach(id => {
+    const el = document.getElementById('btn-'+id);
+    if (el) el.classList.toggle('active', (id === 'tm5' && s === -5) || (id === 't0' && s === 0) || (id === 'tp5' && s === 5));
+  });
+  renderTable();
+}
+
 function setFilter(f) {
   activeFilter = f;
-  ['all','oil','minerals'].forEach(id => {
-    document.getElementById('btn-'+id).classList.toggle('active', id === f);
+  contrastMode = (f === 'contrast');
+  ['all','oil','minerals','contrast'].forEach(id => {
+    const el = document.getElementById('btn-'+id);
+    if (el) el.classList.toggle('active', id === f);
   });
   isolatedName = null;
   spotlightName = null;
@@ -683,9 +891,14 @@ function setFilter(f) {
   renderTable();
 }
 
+function updateGdpHeader() {
+  document.getElementById('gdp-th-text').textContent = 'Index T+' + postWindow;
+}
+
 function onSlider(v) {
   postWindow = parseInt(v, 10);
   document.getElementById('slider-label').textContent = v;
+  updateGdpHeader();
   renderChart();
   renderTable();
 }
@@ -697,11 +910,54 @@ function sortBy(key) {
 }
 
 // ---------------------------------------------------------------------------
+// Tooltip
+// ---------------------------------------------------------------------------
+(function setupTooltip() {
+  const tip = document.getElementById('tooltip');
+  const svg = document.getElementById('chart');
+  svg.addEventListener('mousemove', (e) => {
+    const rect = svg.getBoundingClientRect();
+    const scaleX = 860 / rect.width;
+    const svgX = (e.clientX - rect.left) * scaleX;
+    const svgY = (e.clientY - rect.top) * (460 / rect.height);
+    // Convert x to event-time t
+    const t = Math.round((svgX - PAD.left) / CW * 60 - 20);
+    if (t < -20 || t > 40) { tip.style.display = 'none'; return; }
+    const idx = t + 20;
+    const vis = visibleCountries().filter(c => c.visible && (!contrastMode || CONTRAST_SET.has(c.name)));
+    if (!vis.length) { tip.style.display = 'none'; return; }
+    // Find country whose line is closest to mouse y
+    let best = null, bestDist = Infinity;
+    // Need yMax -- recompute quickly
+    let ym = 0;
+    for (const c of vis) for (const v of c.gdp) ym = Math.max(ym, v);
+    ym = Math.ceil(ym * 1.05 / Math.pow(10, Math.floor(Math.log10(ym * 1.05)))) * Math.pow(10, Math.floor(Math.log10(ym * 1.05)));
+    for (const c of vis) {
+      const cy = PAD.top + (460 - PAD.top - PAD.bottom) - (c.gdp[idx] / ym) * (460 - PAD.top - PAD.bottom);
+      const d = Math.abs(svgY - cy);
+      if (d < bestDist) { bestDist = d; best = c; }
+    }
+    if (best && bestDist < 30) {
+      tip.textContent = best.name + ': ' + best.gdp[idx].toFixed(1);
+      tip.style.display = 'block';
+      tip.style.left = (e.clientX + 12) + 'px';
+      tip.style.top  = (e.clientY + 12) + 'px';
+    } else {
+      tip.style.display = 'none';
+    }
+  });
+  svg.addEventListener('mouseleave', () => { tip.style.display = 'none'; });
+})();
+
+// ---------------------------------------------------------------------------
 // Init
 // ---------------------------------------------------------------------------
 renderChart();
 renderLegend();
 renderTable();
+updateGdpHeader();
 </script>
+
+<div id="tooltip" style="display:none;position:fixed;background:#1a1a1a;color:#fafaf8;font-family:'Courier New',Courier,monospace;font-size:11px;padding:5px 9px;border-radius:2px;pointer-events:none;z-index:100;white-space:nowrap;"></div>
 </body>
 </html>
