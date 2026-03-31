@@ -198,23 +198,36 @@ tr.spotlight-row td { background: #f0eeea; }
 }
 .dimmed { opacity: 0.08 !important; }
 .hover-highlight td { background: #e8e6e0 !important; }
+@media (max-width: 960px) {
+  .guide-grid { grid-template-columns: repeat(2,1fr) !important; }
+  .guide-cell:nth-child(3) { border-top: 1px solid var(--border); padding-top: 14px; }
+  .guide-cell:nth-child(4) { border-top: 1px solid var(--border); padding-top: 14px; }
+  .guide-cell:nth-child(odd) { border-left: none !important; padding-left: 0 !important; padding-right: 20px; }
+  .guide-cell:nth-child(even) { padding-right: 0; }
+}
 @media (max-width: 768px) {
+  body { padding: 16px 14px 40px; }
+  h1 { font-size: 1.15rem; }
+  .subtitle { font-size: 0.64rem; word-break: break-word; }
+  .controls { gap: 8px; }
+  .filter-group { flex-wrap: wrap; }
+  .filter-group[style*="margin-left:12px"] { margin-left: 0 !important; }
+  .controls > div:last-child span { display: none; } /* hide "T=0 sensitivity:" label */
+  .btn { font-size: 0.68rem; padding: 5px 9px; }
   .main-layout { flex-direction: column; }
   #chart-container { flex: none; width: 100%; }
-  #table-panel { width: 100%; min-width: 0; max-height: 320px; overflow-y: auto; overflow-x: auto; }
-  .slider-wrap { margin-left: 0; }
+  #table-panel { width: 100%; min-width: 0; max-height: none; overflow-x: auto; }
+  #slider-row { padding-right: 0 !important; }
+  .guide-grid { grid-template-columns: 1fr !important; }
+  .guide-cell { border-left: none !important; padding-left: 0 !important; border-top: 1px solid var(--border); padding-top: 12px; }
+  .guide-cell:first-child { border-top: none; padding-top: 0; }
+  #spotlight-card { font-size: 0.80rem; }
 }
 </style>
 </head>
 <body>
 
-<div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;">
-  <h1>Resource Extraction and GDP per Capita Trajectories</h1>
-  <a href="https://github.com/03shraddha/resource-vs-gdp" target="_blank" rel="noopener"
-     style="font-family:'Courier New',Courier,monospace;font-size:0.70rem;color:var(--muted);text-decoration:none;letter-spacing:0.03em;white-space:nowrap;border-bottom:1px solid var(--border);padding-bottom:1px;">
-    ↗ try it yourself on github
-  </a>
-</div>
+<h1>Resource Extraction and GDP per Capita Trajectories</h1>
 <p class="subtitle">GDP/pc indexed to 100 at extraction start (T=0) &nbsp;|&nbsp; Event time T-20 to T+60 &nbsp;|&nbsp; Maddison 2023 + World Bank WDI &nbsp;|&nbsp; 28 countries</p>
 
 <div class="controls">
@@ -272,36 +285,53 @@ tr.spotlight-row td { background: #f0eeea; }
   </div>
 </div>
 
-<div id="how-to" style="margin-top:28px;border-top:1px solid var(--border);padding-top:18px;">
-  <div style="display:flex;gap:6px;align-items:center;margin-bottom:12px;cursor:pointer;user-select:none;" onclick="toggleGuide()">
+<div id="how-to" style="margin-top:28px;border-top:1px solid var(--border);padding-top:16px;">
+  <div style="display:flex;gap:6px;align-items:center;margin-bottom:14px;cursor:pointer;user-select:none;" onclick="toggleGuide()">
     <span style="font-family:var(--mono);font-size:0.68rem;letter-spacing:0.06em;color:var(--muted);text-transform:uppercase;">How to read this</span>
     <span id="guide-toggle" style="font-family:var(--mono);font-size:0.68rem;color:var(--muted);">▾</span>
   </div>
-  <div id="guide-body" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px 28px;">
-    <div>
-      <div style="font-family:var(--mono);font-size:0.66rem;letter-spacing:0.07em;color:var(--text);margin-bottom:5px;text-transform:uppercase;">What is T=0?</div>
-      <p style="font-size:0.78rem;line-height:1.65;color:#444;">T=0 is the year a country started <em>significant</em> resource extraction — when oil wells or mines went from experimental to actually producing real revenue. Every line in the chart is indexed to <strong>100</strong> at that year, so you're comparing trajectories, not absolute wealth. A country sitting at 200 at T+20 doubled its income per person in 20 years; one at 80 got poorer.</p>
+  <div id="guide-body" class="guide-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:0;">
+
+    <div class="guide-cell" style="padding-right:24px;">
+      <div style="font-family:var(--mono);font-size:0.63rem;letter-spacing:0.08em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;">What is T=0?</div>
+      <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;">
+        <li style="font-size:0.76rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span>Year a country started <strong>significant</strong> extraction — first real revenue, not discovery</li>
+        <li style="font-size:0.76rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span>All lines indexed to <strong>100 at T=0</strong> — you're comparing trajectories, not wealth levels</li>
+        <li style="font-size:0.76rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span>Index 200 at T+20 = income doubled in 20 yrs &nbsp;·&nbsp; index 80 = got poorer</li>
+        <li style="font-size:0.76rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span>X-axis = years since extraction, not calendar years — Norway 1971 and Nigeria 1958 on same scale</li>
+      </ul>
     </div>
-    <div>
-      <div style="font-family:var(--mono);font-size:0.66rem;letter-spacing:0.07em;color:var(--text);margin-bottom:5px;text-transform:uppercase;">Reading the chart</div>
-      <p style="font-size:0.78rem;line-height:1.65;color:#444;">The <strong>x-axis</strong> is years since extraction started, not calendar years — so Norway (1971) and Nigeria (1958) can be compared side by side. The <strong>shaded band</strong> around T=0 is the ±5-year transition window. <strong>Dashed lines</strong> are pre-1990 estimates spliced from the Maddison Project; treat them as directionally correct but not precise. The dotted vertical line moves with the slider to show your chosen endpoint.</p>
+
+    <div class="guide-cell" style="padding-left:24px;padding-right:24px;border-left:1px solid var(--border);">
+      <div style="font-family:var(--mono);font-size:0.63rem;letter-spacing:0.08em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;">Controls</div>
+      <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;">
+        <li style="font-size:0.76rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><strong>Drag the slider</strong> to move the "After" endpoint — watch rankings completely change</li>
+        <li style="font-size:0.76rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><strong>Contrast</strong> — isolates the sharpest divergence pairs (Norway vs Nigeria, Botswana vs Sierra Leone…)</li>
+        <li style="font-size:0.76rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><strong>T−5 / T+5</strong> — shift extraction start ±5 yrs to see if findings hold</li>
+        <li style="font-size:0.76rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><strong>Click</strong> legend dot to toggle &nbsp;·&nbsp; <strong>double-click</strong> to isolate &nbsp;·&nbsp; <strong>click any row</strong> for the story</li>
+      </ul>
     </div>
-    <div>
-      <div style="font-family:var(--mono);font-size:0.66rem;letter-spacing:0.07em;color:var(--text);margin-bottom:5px;text-transform:uppercase;">Controls</div>
-      <p style="font-size:0.78rem;line-height:1.65;color:#444;"><strong>Slider</strong> (bottom-left of chart) moves the "After" endpoint from T+10 to T+60 — drag it to see how rankings shift over time. <strong>T−5 / T+5</strong> buttons shift the extraction start date ±5 years to check if findings are sensitive to that choice. <strong>Contrast</strong> isolates the sharpest divergence pairs. <strong>Click</strong> a legend dot to hide/show a country; <strong>double-click</strong> to isolate it solo. <strong>Click any table row</strong> to read the country's story.</p>
+
+    <div class="guide-cell" style="padding-left:24px;padding-right:24px;border-left:1px solid var(--border);">
+      <div style="font-family:var(--mono);font-size:0.63rem;letter-spacing:0.08em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;">The numbers</div>
+      <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;">
+        <li style="font-size:0.76rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><strong>Before</strong> = avg annual growth in the 10 yrs before extraction started</li>
+        <li style="font-size:0.76rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><strong>After</strong> = avg annual growth from T=0 to the slider year</li>
+        <li style="font-size:0.76rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><strong>Index</strong> = GDP/person at slider year ÷ GDP/person at T=0 × 100. No fancy math.</li>
+        <li style="font-size:0.76rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><span style="color:#c8860a;">⚠</span> flag = oil revenues so concentrated at top that the average says nothing about how people lived</li>
+      </ul>
     </div>
-    <div>
-      <div style="font-family:var(--mono);font-size:0.66rem;letter-spacing:0.07em;color:var(--text);margin-bottom:5px;text-transform:uppercase;">The numbers</div>
-      <p style="font-size:0.78rem;line-height:1.65;color:#444;"><strong>Before / After</strong> are average annual growth rates in the 10 years before and N years after T=0. <strong>Index</strong> is just GDP/person at the slider year relative to T=0 — no fancy math, just a ratio. The <span style="color:#c8860a;font-size:0.8em;">⚠</span> flag means GDP per capita is likely a poor welfare proxy: oil revenues were so concentrated at the top that the average tells you almost nothing about how ordinary people lived.</p>
+
+    <div class="guide-cell" style="padding-left:24px;border-left:1px solid var(--border);">
+      <div style="font-family:var(--mono);font-size:0.63rem;letter-spacing:0.08em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;">Data &amp; caveats</div>
+      <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;">
+        <li style="font-size:0.76rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><strong>Solid lines</strong> = World Bank WDI post-1990 (constant 2021 PPP $)</li>
+        <li style="font-size:0.76rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><strong>Dashed lines</strong> = pre-1990 estimates backfilled from Maddison 2023 — directionally right, not precise</li>
+        <li style="font-size:0.76rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span>Indonesia 1885, Malaysia 1910 rely heavily on colonial-era estimates — treat as rough</li>
+        <li style="font-size:0.76rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span>Nauru &amp; early DRC data are sparse — shape is right, exact values are estimates</li>
+      </ul>
     </div>
-    <div>
-      <div style="font-family:var(--mono);font-size:0.66rem;letter-spacing:0.07em;color:var(--text);margin-bottom:5px;text-transform:uppercase;">Data sources</div>
-      <p style="font-size:0.78rem;line-height:1.65;color:#444;"><strong>Post-1990 GDP/pc</strong>: World Bank WDI indicator NY.GDP.PCAP.PP.KD (constant 2021 PPP $). <strong>Pre-1990 backfill</strong>: Maddison Project Database 2023 growth rates spliced to the WB anchor. <strong>T=0 dates</strong>: manually set to the first year of commercially significant extraction, not discovery. 28 countries across oil, natural gas, diamonds, copper, and phosphate.</p>
-    </div>
-    <div>
-      <div style="font-family:var(--mono);font-size:0.66rem;letter-spacing:0.07em;color:var(--text);margin-bottom:5px;text-transform:uppercase;">Caveats worth knowing</div>
-      <p style="font-size:0.78rem;line-height:1.65;color:#444;">Some T=0 dates (Indonesia 1885, Malaysia 1910) rely heavily on colonial-era Maddison estimates — treat the dashed lines as rough. Nauru and early DRC data are sparse enough that the exact shape is uncertain. The T=0 sensitivity buttons let you stress-test the single biggest assumption: whether extraction start dates are right.</p>
-    </div>
+
   </div>
 </div>
 
