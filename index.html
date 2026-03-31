@@ -36,7 +36,7 @@ h1 {
 }
 .subtitle {
   font-family: var(--mono);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   color: var(--muted);
   margin-bottom: 20px;
   letter-spacing: 0.03em;
@@ -51,7 +51,7 @@ h1 {
 .filter-group { display: flex; gap: 5px; }
 .btn {
   font-family: var(--mono);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   padding: 5px 12px;
   border: 1px solid var(--border);
   background: var(--bg);
@@ -68,7 +68,7 @@ h1 {
   align-items: center;
   gap: 8px;
   font-family: var(--mono);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   color: var(--muted);
   margin-left: auto;
 }
@@ -102,7 +102,7 @@ svg#chart {
   align-items: center;
   gap: 5px;
   cursor: pointer;
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-family: var(--mono);
   color: var(--text);
   user-select: none;
@@ -127,11 +127,11 @@ svg#chart {
 table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.72rem;
+  font-size: 0.75rem;
 }
 th {
   font-family: var(--mono);
-  font-size: 0.64rem;
+  font-size: 0.68rem;
   text-align: right;
   letter-spacing: 0.04em;
   color: var(--muted);
@@ -148,7 +148,7 @@ td {
   padding: 3px 6px 3px 3px;
   border-bottom: 1px solid var(--border);
   font-family: var(--mono);
-  font-size: 0.70rem;
+  font-size: 0.75rem;
   text-align: right;
   white-space: nowrap;
 }
@@ -161,7 +161,7 @@ tr:hover td { background: var(--highlight); }
 tr.spotlight-row td { background: #f0eeea; }
 .res-tag {
   display: inline-block;
-  font-size: 0.60rem;
+  font-size: 0.65rem;
   padding: 1px 3px;
   border: 1px solid var(--border);
   border-radius: 2px;
@@ -206,14 +206,14 @@ tr.spotlight-row td { background: #f0eeea; }
   .guide-cell:nth-child(even) { padding-right: 0; }
 }
 @media (max-width: 768px) {
-  body { padding: 16px 14px 40px; }
-  h1 { font-size: 1.15rem; }
-  .subtitle { font-size: 0.64rem; word-break: break-word; }
+  html { font-size: 20px; } /* scale all rem values up for mobile */
+  body { padding: 16px 14px 40px; font-size: 15px; }
+  h1 { font-size: 1.3rem; }
+  .subtitle { word-break: break-word; }
   .controls { gap: 8px; }
   .filter-group { flex-wrap: wrap; }
   .filter-group[style*="margin-left:12px"] { margin-left: 0 !important; }
   .controls > div:last-child span { display: none; } /* hide "T=0 sensitivity:" label */
-  .btn { font-size: 0.68rem; padding: 5px 9px; }
   .main-layout { flex-direction: column; }
   #chart-container { flex: none; width: 100%; }
   #table-panel { width: 100%; min-width: 0; max-height: none; overflow-x: auto; }
@@ -221,7 +221,6 @@ tr.spotlight-row td { background: #f0eeea; }
   .guide-grid { grid-template-columns: 1fr !important; }
   .guide-cell { border-left: none !important; padding-left: 0 !important; border-top: 1px solid var(--border); padding-top: 12px; }
   .guide-cell:first-child { border-top: none; padding-top: 0; }
-  #spotlight-card { font-size: 0.80rem; }
 }
 </style>
 </head>
@@ -248,13 +247,13 @@ tr.spotlight-row td { background: #f0eeea; }
 <div class="main-layout">
   <div id="chart-container">
     <svg id="chart" viewBox="0 0 860 460" xmlns="http://www.w3.org/2000/svg"></svg>
-    <div id="slider-row" style="display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:5px;padding-right:24px;font-family:'Courier New',Courier,monospace;font-size:0.70rem;color:#888;">
+    <div id="slider-row" style="display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:5px;padding-right:24px;font-family:'Courier New',Courier,monospace;font-size:0.75rem;color:#888;">
       post window: T+<strong id="slider-label">30</strong>
       <input type="range" id="post-slider" min="10" max="60" value="30" oninput="onSlider(this.value)" style="width:120px;accent-color:#1a1a1a;">
     </div>
     <div class="legend" id="legend"></div>
-    <p id="legend-hint" style="font-family:'Courier New',Courier,monospace;font-size:0.66rem;color:#bbb;margin-top:5px;">click to toggle &nbsp;|&nbsp; double-click to isolate</p>
-    <p id="uncertainty-hint" style="font-family:'Courier New',Courier,monospace;font-size:0.66rem;color:#bbb;margin-top:3px;">dashed = pre-1990 estimate (Maddison backfill)</p>
+    <p id="legend-hint" style="font-family:'Courier New',Courier,monospace;font-size:0.68rem;color:#bbb;margin-top:5px;">click to toggle &nbsp;|&nbsp; double-click to isolate</p>
+    <p id="uncertainty-hint" style="font-family:'Courier New',Courier,monospace;font-size:0.68rem;color:#bbb;margin-top:3px;">dashed = pre-1990 estimate (Maddison backfill)</p>
     <div id="spotlight-card">
       <button id="spotlight-close" onclick="closeSpotlight()" title="Close">x</button>
       <h3 id="sp-title"></h3>
@@ -275,7 +274,7 @@ tr.spotlight-row td { background: #f0eeea; }
       </thead>
       <tbody id="table-body"></tbody>
     </table>
-    <div style="margin-top:10px;font-family:'Courier New',Courier,monospace;font-size:0.67rem;color:#888;line-height:1.7;border-top:1px solid var(--border);padding-top:8px;">
+    <div style="margin-top:10px;font-family:'Courier New',Courier,monospace;font-size:0.72rem;color:#888;line-height:1.7;border-top:1px solid var(--border);padding-top:8px;">
       <strong style="color:#555;">Year</strong> — when significant extraction started (T=0)<br>
       <strong style="color:#555;">Growth Before</strong> — avg annual GDP/person growth in the 10 yrs before extraction<br>
       <strong style="color:#555;">Growth After</strong> — avg annual GDP/person growth from T=0 to the slider year<br>
@@ -293,42 +292,42 @@ tr.spotlight-row td { background: #f0eeea; }
   <div id="guide-body" class="guide-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:0;">
 
     <div class="guide-cell" style="padding-right:24px;">
-      <div style="font-family:var(--mono);font-size:0.63rem;letter-spacing:0.08em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;">What is T=0?</div>
+      <div style="font-family:var(--mono);font-size:0.68rem;letter-spacing:0.08em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;">What is T=0?</div>
       <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;">
-        <li style="font-size:0.76rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span>Year a country started <strong>significant</strong> extraction — first real revenue, not discovery</li>
-        <li style="font-size:0.76rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span>All lines indexed to <strong>100 at T=0</strong> — you're comparing trajectories, not wealth levels</li>
-        <li style="font-size:0.76rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span>Index 200 at T+20 = income doubled in 20 yrs &nbsp;·&nbsp; index 80 = got poorer</li>
-        <li style="font-size:0.76rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span>X-axis = years since extraction, not calendar years — Norway 1971 and Nigeria 1958 on same scale</li>
+        <li style="font-size:0.78rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span>Year a country started <strong>significant</strong> extraction — first real revenue, not discovery</li>
+        <li style="font-size:0.78rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span>All lines indexed to <strong>100 at T=0</strong> — you're comparing trajectories, not wealth levels</li>
+        <li style="font-size:0.78rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span>Index 200 at T+20 = income doubled in 20 yrs &nbsp;·&nbsp; index 80 = got poorer</li>
+        <li style="font-size:0.78rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span>X-axis = years since extraction, not calendar years — Norway 1971 and Nigeria 1958 on same scale</li>
       </ul>
     </div>
 
     <div class="guide-cell" style="padding-left:24px;padding-right:24px;border-left:1px solid var(--border);">
-      <div style="font-family:var(--mono);font-size:0.63rem;letter-spacing:0.08em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;">Controls</div>
+      <div style="font-family:var(--mono);font-size:0.68rem;letter-spacing:0.08em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;">Controls</div>
       <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;">
-        <li style="font-size:0.76rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><strong>Drag the slider</strong> to move the "After" endpoint — watch rankings completely change</li>
-        <li style="font-size:0.76rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><strong>Contrast</strong> — isolates the sharpest divergence pairs (Norway vs Nigeria, Botswana vs Sierra Leone…)</li>
-        <li style="font-size:0.76rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><strong>T−5 / T+5</strong> — shift extraction start ±5 yrs to see if findings hold</li>
-        <li style="font-size:0.76rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><strong>Click</strong> legend dot to toggle &nbsp;·&nbsp; <strong>double-click</strong> to isolate &nbsp;·&nbsp; <strong>click any row</strong> for the story</li>
+        <li style="font-size:0.78rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><strong>Drag the slider</strong> to move the "After" endpoint — watch rankings completely change</li>
+        <li style="font-size:0.78rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><strong>Contrast</strong> — isolates the sharpest divergence pairs (Norway vs Nigeria, Botswana vs Sierra Leone…)</li>
+        <li style="font-size:0.78rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><strong>T−5 / T+5</strong> — shift extraction start ±5 yrs to see if findings hold</li>
+        <li style="font-size:0.78rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><strong>Click</strong> legend dot to toggle &nbsp;·&nbsp; <strong>double-click</strong> to isolate &nbsp;·&nbsp; <strong>click any row</strong> for the story</li>
       </ul>
     </div>
 
     <div class="guide-cell" style="padding-left:24px;padding-right:24px;border-left:1px solid var(--border);">
-      <div style="font-family:var(--mono);font-size:0.63rem;letter-spacing:0.08em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;">The numbers</div>
+      <div style="font-family:var(--mono);font-size:0.68rem;letter-spacing:0.08em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;">The numbers</div>
       <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;">
-        <li style="font-size:0.76rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><strong>Before</strong> = avg annual growth in the 10 yrs before extraction started</li>
-        <li style="font-size:0.76rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><strong>After</strong> = avg annual growth from T=0 to the slider year</li>
-        <li style="font-size:0.76rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><strong>Index</strong> = GDP/person at slider year ÷ GDP/person at T=0 × 100. No fancy math.</li>
-        <li style="font-size:0.76rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><span style="color:#c8860a;">⚠</span> flag = oil revenues so concentrated at top that the average says nothing about how people lived</li>
+        <li style="font-size:0.78rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><strong>Before</strong> = avg annual growth in the 10 yrs before extraction started</li>
+        <li style="font-size:0.78rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><strong>After</strong> = avg annual growth from T=0 to the slider year</li>
+        <li style="font-size:0.78rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><strong>Index</strong> = GDP/person at slider year ÷ GDP/person at T=0 × 100. No fancy math.</li>
+        <li style="font-size:0.78rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><span style="color:#c8860a;">⚠</span> flag = oil revenues so concentrated at top that the average says nothing about how people lived</li>
       </ul>
     </div>
 
     <div class="guide-cell" style="padding-left:24px;border-left:1px solid var(--border);">
-      <div style="font-family:var(--mono);font-size:0.63rem;letter-spacing:0.08em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;">Data &amp; caveats</div>
+      <div style="font-family:var(--mono);font-size:0.68rem;letter-spacing:0.08em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;">Data &amp; caveats</div>
       <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;">
-        <li style="font-size:0.76rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><strong>Solid lines</strong> = World Bank WDI post-1990 (constant 2021 PPP $)</li>
-        <li style="font-size:0.76rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><strong>Dashed lines</strong> = pre-1990 estimates backfilled from Maddison 2023 — directionally right, not precise</li>
-        <li style="font-size:0.76rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span>Indonesia 1885, Malaysia 1910 rely heavily on colonial-era estimates — treat as rough</li>
-        <li style="font-size:0.76rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span>Nauru &amp; early DRC data are sparse — shape is right, exact values are estimates</li>
+        <li style="font-size:0.78rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><strong>Solid lines</strong> = World Bank WDI post-1990 (constant 2021 PPP $)</li>
+        <li style="font-size:0.78rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><strong>Dashed lines</strong> = pre-1990 estimates backfilled from Maddison 2023 — directionally right, not precise</li>
+        <li style="font-size:0.78rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span>Indonesia 1885, Malaysia 1910 rely heavily on colonial-era estimates — treat as rough</li>
+        <li style="font-size:0.78rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span>Nauru &amp; early DRC data are sparse — shape is right, exact values are estimates</li>
       </ul>
     </div>
 
@@ -513,12 +512,13 @@ const CONTRAST_SET = new Set([
 ]);
 
 // ---------------------------------------------------------------------------
-// Chart dimensions
+// Chart dimensions (updated responsively at render time)
 // ---------------------------------------------------------------------------
-const PAD = { left:58, right:22, top:24, bottom:52 };
-const W = 860, H = 460;
-const CW = W - PAD.left - PAD.right;
-const CH = H - PAD.top  - PAD.bottom;
+let PAD = { left:58, right:22, top:24, bottom:52 };
+let W = 860, H = 460;
+let CW = W - PAD.left - PAD.right;
+let CH = H - PAD.top  - PAD.bottom;
+let FS  = { xs: '8.5', sm: '9', md: '10' }; // SVG font sizes (viewBox units)
 
 function xPos(t) { return PAD.left + (t + 20) / 80 * CW; }
 function yPos(v, yMax) { return PAD.top + CH - (v / yMax) * CH; }
@@ -534,7 +534,22 @@ function visibleCountries() {
 // SVG rendering
 // ---------------------------------------------------------------------------
 function renderChart() {
+  // Responsive chart dimensions — mobile gets a taller/narrower viewBox with bigger fonts
+  const mobile = window.innerWidth < 640;
+  if (mobile) {
+    PAD = { left: 44, right: 10, top: 22, bottom: 44 };
+    W = 460; H = 490;
+    FS = { xs: '11', sm: '12', md: '14' };
+  } else {
+    PAD = { left: 58, right: 22, top: 24, bottom: 52 };
+    W = 860; H = 460;
+    FS = { xs: '8.5', sm: '9', md: '10' };
+  }
+  CW = W - PAD.left - PAD.right;
+  CH = H - PAD.top - PAD.bottom;
+
   const svg = document.getElementById('chart');
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
   svg.innerHTML = '';
   const ns = 'http://www.w3.org/2000/svg';
   function el(tag, attrs, text) {
@@ -574,7 +589,7 @@ function renderChart() {
     y: PAD.top + CH - 8,
     'text-anchor': 'middle',
     fill: '#bbb',
-    'font-size': '8.5',
+    'font-size': FS.xs,
     'font-family': 'Courier New, monospace',
     'letter-spacing': '0.03em'
   }, 'transition window'));
@@ -590,7 +605,7 @@ function renderChart() {
     }));
     svg.appendChild(el('text', {
       x: PAD.left - 6, y: y + 4,
-      'text-anchor': 'end', fill: '#888', 'font-size': '10',
+      'text-anchor': 'end', fill: '#888', 'font-size': FS.md,
       'font-family': 'Courier New, monospace'
     }, v.toString()));
   }
@@ -605,8 +620,9 @@ function renderChart() {
     stroke: '#aaa', 'stroke-width': '1'
   }));
 
-  // x-axis ticks and labels
-  for (const t of [-20,-10,0,10,20,30,40,50,60]) {
+  // x-axis ticks and labels (skip alternate ticks on mobile to avoid crowding)
+  const xTicks = mobile ? [-20, 0, 20, 40, 60] : [-20,-10,0,10,20,30,40,50,60];
+  for (const t of xTicks) {
     const x = xPos(t);
     svg.appendChild(el('line', {
       x1: x, y1: PAD.top+CH, x2: x, y2: PAD.top+CH+5,
@@ -614,7 +630,7 @@ function renderChart() {
     }));
     svg.appendChild(el('text', {
       x: x, y: PAD.top+CH+17,
-      'text-anchor': 'middle', fill: '#666', 'font-size': '10',
+      'text-anchor': 'middle', fill: '#666', 'font-size': FS.md,
       'font-family': 'Courier New, monospace'
     }, t === 0 ? 'T=0' : (t > 0 ? 'T+'+t : 'T'+t)));
   }
@@ -627,7 +643,7 @@ function renderChart() {
   }));
   svg.appendChild(el('text', {
     x: x0+4, y: PAD.top+14,
-    fill: '#888', 'font-size': '9', 'font-family': 'Courier New, monospace'
+    fill: '#888', 'font-size': FS.sm, 'font-family': 'Courier New, monospace'
   }, 'extraction begins'));
 
   // Post-window marker
@@ -764,7 +780,7 @@ function renderChart() {
       lastY = ly;
       svg.appendChild(el('text', {
         x: xPos(40) + 5, y: ly,
-        fill: pt.color, 'font-size': '8.5', 'font-family': 'Courier New, monospace',
+        fill: pt.color, 'font-size': FS.xs, 'font-family': 'Courier New, monospace',
         'font-weight': 'bold'
       }, abbr(pt.name)));
     }
@@ -778,14 +794,14 @@ function renderChart() {
   }));
   svg.appendChild(el('text', {
     x: PAD.left-6, y: y100+4,
-    'text-anchor': 'end', fill: '#bbb', 'font-size': '9',
+    'text-anchor': 'end', fill: '#bbb', 'font-size': FS.sm,
     'font-family': 'Courier New, monospace'
   }, '100'));
 
   // Axis label
   svg.appendChild(el('text', {
     x: 12, y: PAD.top + CH/2,
-    fill: '#999', 'font-size': '9', 'font-family': 'Courier New, monospace',
+    fill: '#999', 'font-size': FS.sm, 'font-family': 'Courier New, monospace',
     transform: `rotate(-90, 12, ${PAD.top + CH/2})`,'text-anchor': 'middle'
   }, 'GDP/pc indexed (T=0 = 100)'));
 }
@@ -996,9 +1012,9 @@ function sortBy(key) {
   const svg = document.getElementById('chart');
   svg.addEventListener('mousemove', (e) => {
     const rect = svg.getBoundingClientRect();
-    const scaleX = 860 / rect.width;
+    const scaleX = W / rect.width;
     const svgX = (e.clientX - rect.left) * scaleX;
-    const svgY = (e.clientY - rect.top) * (460 / rect.height);
+    const svgY = (e.clientY - rect.top) * (H / rect.height);
     // Convert x to event-time t
     const t = Math.round((svgX - PAD.left) / CW * 60 - 20);
     if (t < -20 || t > 40) { tip.style.display = 'none'; return; }
@@ -1012,7 +1028,7 @@ function sortBy(key) {
     for (const c of vis) for (const v of c.gdp) ym = Math.max(ym, v);
     ym = Math.ceil(ym * 1.05 / Math.pow(10, Math.floor(Math.log10(ym * 1.05)))) * Math.pow(10, Math.floor(Math.log10(ym * 1.05)));
     for (const c of vis) {
-      const cy = PAD.top + (460 - PAD.top - PAD.bottom) - (c.gdp[idx] / ym) * (460 - PAD.top - PAD.bottom);
+      const cy = PAD.top + CH - (c.gdp[idx] / ym) * CH;
       const d = Math.abs(svgY - cy);
       if (d < bestDist) { bestDist = d; best = c; }
     }
@@ -1035,6 +1051,13 @@ renderChart();
 renderLegend();
 renderTable();
 updateGdpHeader();
+
+// Re-render chart on resize (handles orientation change on mobile)
+let _resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(_resizeTimer);
+  _resizeTimer = setTimeout(renderChart, 150);
+});
 </script>
 
 <div id="tooltip" style="display:none;position:fixed;background:#1a1a1a;color:#fafaf8;font-family:'Courier New',Courier,monospace;font-size:11px;padding:5px 9px;border-radius:2px;pointer-events:none;z-index:100;white-space:nowrap;"></div>
