@@ -28,10 +28,10 @@ body {
   margin: 0 auto;
 }
 h1 {
-  font-family: var(--serif);
+  font-family: var(--sans);
   font-size: 1.5rem;
-  font-weight: normal;
-  letter-spacing: -0.01em;
+  font-weight: 600;
+  letter-spacing: -0.02em;
   margin-bottom: 4px;
 }
 .subtitle {
@@ -175,8 +175,8 @@ tr.spotlight-row td { background: #f0eeea; }
   position: relative;
 }
 #spotlight-card h3 {
-  font-family: var(--serif);
-  font-weight: normal;
+  font-family: var(--sans);
+  font-weight: 600;
   font-size: 0.95rem;
   margin-bottom: 6px;
 }
@@ -206,20 +206,21 @@ tr.spotlight-row td { background: #f0eeea; }
   .guide-cell:nth-child(even) { padding-right: 0; }
 }
 @media (max-width: 768px) {
-  html { font-size: 20px; } /* scale all rem values up for mobile */
-  body { padding: 16px 14px 40px; font-size: 15px; }
-  h1 { font-size: 1.3rem; }
-  .subtitle { display: flex; flex-wrap: wrap; gap: 2px 0; }
+  body { padding: 14px 14px 40px; font-size: 14px; }
+  h1 { font-size: 1.2rem; }
+  .subtitle { display: flex; flex-wrap: wrap; gap: 2px 0; font-size: 0.7rem; }
   .sub-sep { display: none; }
   .sub-item::after { content: ''; display: block; }
-  .controls { gap: 8px; }
+  .controls { gap: 6px; margin-bottom: 12px; }
   .filter-group { flex-wrap: wrap; }
-  .filter-group[style*="margin-left:12px"] { margin-left: 0 !important; }
-  .controls > div:last-child span { display: none; } /* hide "T=0 sensitivity:" label */
+  .btn { padding: 7px 14px; font-size: 0.72rem; } /* larger touch targets */
   .main-layout { flex-direction: column; }
   #chart-container { flex: none; width: 100%; }
   #table-panel { width: 100%; min-width: 0; max-height: none; overflow-x: auto; }
-  #slider-row { padding-right: 0 !important; }
+  #slider-row { padding-right: 0 !important; justify-content: flex-start !important; }
+  #post-slider { width: 100% !important; max-width: 200px; }
+  /* hide Type column on mobile — filter buttons already show the type */
+  #data-table th:nth-child(2), #data-table td:nth-child(2) { display: none; }
   .guide-grid { grid-template-columns: 1fr !important; }
   .guide-cell { border-left: none !important; padding-left: 0 !important; border-top: 1px solid var(--border); padding-top: 12px; }
   .guide-cell:first-child { border-top: none; padding-top: 0; }
@@ -229,7 +230,7 @@ tr.spotlight-row td { background: #f0eeea; }
 <body>
 
 <h1>Resource Extraction and GDP per Capita Trajectories</h1>
-<p class="subtitle"><span class="sub-item">GDP/pc indexed to 100 at extraction start (T=0)</span><span class="sub-sep"> | </span><span class="sub-item">Event time T-20 to T+60</span><span class="sub-sep"> | </span><span class="sub-item">Maddison 2023 + World Bank WDI</span><span class="sub-sep"> | </span><span class="sub-item">28 countries</span></p>
+<p class="subtitle"><span class="sub-item">GDP/pc indexed to 100 at extraction start</span><span class="sub-sep"> | </span><span class="sub-item">20 years before to 60 years after</span><span class="sub-sep"> | </span><span class="sub-item">Maddison 2023 + World Bank WDI</span><span class="sub-sep"> | </span><span class="sub-item">28 countries</span></p>
 
 <div class="controls">
   <div class="filter-group">
@@ -238,24 +239,18 @@ tr.spotlight-row td { background: #f0eeea; }
     <button class="btn" id="btn-minerals" onclick="setFilter('minerals')">Minerals</button>
     <button class="btn" id="btn-contrast" onclick="setFilter('contrast')" title="Norway vs Nigeria, Botswana vs Sierra Leone, UAE vs Venezuela, Nauru vs Kazakhstan">Contrast</button>
   </div>
-  <div class="filter-group" style="margin-left:12px;" title="Shift the T=0 extraction start date ±5 years to see how sensitive the CAGRs are to this choice">
-    <span style="font-family:'Courier New',Courier,monospace;font-size:0.68rem;color:#888;margin-right:4px;">T=0 sensitivity:</span>
-    <button class="btn" id="btn-tm5" onclick="setT0Shift(-5)">T−5</button>
-    <button class="btn active" id="btn-t0" onclick="setT0Shift(0)">T=0</button>
-    <button class="btn" id="btn-tp5" onclick="setT0Shift(5)">T+5</button>
-  </div>
 </div>
 
 <div class="main-layout">
   <div id="chart-container">
     <svg id="chart" viewBox="0 0 860 460" xmlns="http://www.w3.org/2000/svg"></svg>
-    <div id="slider-row" style="display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:5px;padding-right:24px;font-family:'Courier New',Courier,monospace;font-size:0.75rem;color:#888;">
-      post window: T+<strong id="slider-label">30</strong>
+    <div id="slider-row" style="display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:5px;padding-right:24px;font-family:var(--mono);font-size:0.75rem;color:#888;">
+      show up to year +<strong id="slider-label">30</strong>
       <input type="range" id="post-slider" min="10" max="60" value="30" oninput="onSlider(this.value)" style="width:120px;accent-color:#1a1a1a;">
     </div>
     <div class="legend" id="legend"></div>
-    <p id="legend-hint" style="font-family:'Courier New',Courier,monospace;font-size:0.68rem;color:#bbb;margin-top:5px;">click to toggle &nbsp;|&nbsp; double-click to isolate</p>
-    <p id="uncertainty-hint" style="font-family:'Courier New',Courier,monospace;font-size:0.68rem;color:#bbb;margin-top:3px;">dashed = pre-1990 estimate (Maddison backfill)</p>
+    <p id="legend-hint" style="font-family:var(--mono);font-size:0.68rem;color:#bbb;margin-top:5px;">click to toggle &nbsp;|&nbsp; double-click to isolate</p>
+    <p id="uncertainty-hint" style="font-family:var(--mono);font-size:0.68rem;color:#bbb;margin-top:3px;">dashed = pre-1990 estimate (Maddison backfill)</p>
     <div id="spotlight-card">
       <button id="spotlight-close" onclick="closeSpotlight()" title="Close">x</button>
       <h3 id="sp-title"></h3>
@@ -276,12 +271,12 @@ tr.spotlight-row td { background: #f0eeea; }
       </thead>
       <tbody id="table-body"></tbody>
     </table>
-    <div style="margin-top:10px;font-family:'Courier New',Courier,monospace;font-size:0.72rem;color:#888;line-height:1.7;border-top:1px solid var(--border);padding-top:8px;">
-      <strong style="color:#555;">Year</strong> — when significant extraction started (T=0)<br>
-      <strong style="color:#555;">Growth Before</strong> — avg annual GDP/person growth in the 10 yrs before extraction<br>
-      <strong style="color:#555;">Growth After</strong> — avg annual GDP/person growth from T=0 to the slider year<br>
+    <div style="margin-top:10px;font-family:var(--mono);font-size:0.72rem;color:#888;line-height:1.7;border-top:1px solid var(--border);padding-top:8px;">
+      <strong style="color:#555;">Year</strong> — when significant extraction started<br>
+      <strong style="color:#555;">Before</strong> — avg annual GDP/person growth in the 10 yrs before extraction<br>
+      <strong style="color:#555;">After</strong> — avg annual GDP/person growth from extraction start to the slider year<br>
       <strong style="color:#555;">Index</strong> — GDP/person at the slider year, where 100 = the extraction start year<br>
-      <span style="color:#aaa;">Slider (bottom-left) moves the "Growth After" endpoint — drag it to see how trajectories change over time.</span>
+      <span style="color:#aaa;">Drag the slider to move the "After" endpoint and watch trajectories change.</span>
     </div>
   </div>
 </div>
@@ -294,12 +289,12 @@ tr.spotlight-row td { background: #f0eeea; }
   <div id="guide-body" class="guide-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:0;">
 
     <div class="guide-cell" style="padding-right:24px;">
-      <div style="font-family:var(--mono);font-size:0.68rem;letter-spacing:0.08em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;">What is T=0?</div>
+      <div style="font-family:var(--mono);font-size:0.68rem;letter-spacing:0.08em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;">What is the start year?</div>
       <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;">
         <li style="font-size:0.78rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span>Year a country started <strong>significant</strong> extraction — first real revenue, not discovery</li>
-        <li style="font-size:0.78rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span>All lines indexed to <strong>100 at T=0</strong> — you're comparing trajectories, not wealth levels</li>
-        <li style="font-size:0.78rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span>Index 200 at T+20 = income doubled in 20 yrs &nbsp;·&nbsp; index 80 = got poorer</li>
-        <li style="font-size:0.78rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span>X-axis = years since extraction, not calendar years — Norway 1971 and Nigeria 1958 on same scale</li>
+        <li style="font-size:0.78rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span>All lines set to <strong>100 at the start year</strong> — you're comparing trajectories, not wealth levels</li>
+        <li style="font-size:0.78rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span>Index 200 at year 20 = income doubled in 20 yrs &nbsp;·&nbsp; index 80 = got poorer</li>
+        <li style="font-size:0.78rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span>X-axis = years since extraction began, not calendar years — Norway 1971 and Nigeria 1958 on same scale</li>
       </ul>
     </div>
 
@@ -308,7 +303,6 @@ tr.spotlight-row td { background: #f0eeea; }
       <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;">
         <li style="font-size:0.78rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><strong>Drag the slider</strong> to move the "After" endpoint — watch rankings completely change</li>
         <li style="font-size:0.78rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><strong>Contrast</strong> — isolates the sharpest divergence pairs (Norway vs Nigeria, Botswana vs Sierra Leone…)</li>
-        <li style="font-size:0.78rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><strong>T−5 / T+5</strong> — shift extraction start ±5 yrs to see if findings hold</li>
         <li style="font-size:0.78rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><strong>Click</strong> legend dot to toggle &nbsp;·&nbsp; <strong>double-click</strong> to isolate &nbsp;·&nbsp; <strong>click any row</strong> for the story</li>
       </ul>
     </div>
@@ -317,8 +311,8 @@ tr.spotlight-row td { background: #f0eeea; }
       <div style="font-family:var(--mono);font-size:0.68rem;letter-spacing:0.08em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;">The numbers</div>
       <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;">
         <li style="font-size:0.78rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><strong>Before</strong> = avg annual growth in the 10 yrs before extraction started</li>
-        <li style="font-size:0.78rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><strong>After</strong> = avg annual growth from T=0 to the slider year</li>
-        <li style="font-size:0.78rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><strong>Index</strong> = GDP/person at slider year ÷ GDP/person at T=0 × 100. No fancy math.</li>
+        <li style="font-size:0.78rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><strong>After</strong> = avg annual growth from extraction start to the slider year</li>
+        <li style="font-size:0.78rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><strong>Index</strong> = GDP/person at slider year ÷ GDP/person at start year × 100. No fancy math.</li>
         <li style="font-size:0.78rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><span style="color:#c8860a;">⚠</span> flag = oil revenues so concentrated at top that the average says nothing about how people lived</li>
       </ul>
     </div>
@@ -494,7 +488,7 @@ const COUNTRIES = RAW.map(r => {
 // ---------------------------------------------------------------------------
 let activeFilter  = 'all';   // 'all' | 'oil' | 'minerals' | 'contrast'
 let postWindow    = 30;
-let t0Shift       = 0;       // -5, 0, or +5 — shifts the T=0 reference point
+const t0Shift     = 0;       // fixed at 0 (sensitivity feature removed)
 let sortKey       = 'post';
 let sortDir       = -1;
 let isolatedName  = null;
@@ -634,7 +628,7 @@ function renderChart() {
       x: x, y: PAD.top+CH+17,
       'text-anchor': 'middle', fill: '#666', 'font-size': FS.md,
       'font-family': 'Courier New, monospace'
-    }, t === 0 ? 'T=0' : (t > 0 ? 'T+'+t : 'T'+t)));
+    }, t === 0 ? 'Start' : (t > 0 ? '+'+t : ''+t)));
   }
 
   // Vertical line at T=0
@@ -805,7 +799,7 @@ function renderChart() {
     x: 12, y: PAD.top + CH/2,
     fill: '#999', 'font-size': FS.sm, 'font-family': 'Courier New, monospace',
     transform: `rotate(-90, 12, ${PAD.top + CH/2})`,'text-anchor': 'middle'
-  }, 'GDP/pc indexed (T=0 = 100)'));
+  }, 'GDP/pc indexed (start year = 100)'));
 }
 
 // ---------------------------------------------------------------------------
@@ -969,15 +963,6 @@ function closeSpotlight() {
 // ---------------------------------------------------------------------------
 // Controls
 // ---------------------------------------------------------------------------
-function setT0Shift(s) {
-  t0Shift = s;
-  ['tm5','t0','tp5'].forEach(id => {
-    const el = document.getElementById('btn-'+id);
-    if (el) el.classList.toggle('active', (id === 'tm5' && s === -5) || (id === 't0' && s === 0) || (id === 'tp5' && s === 5));
-  });
-  renderTable();
-}
-
 function setFilter(f) {
   activeFilter = f;
   contrastMode = (f === 'contrast');
@@ -994,7 +979,7 @@ function setFilter(f) {
 }
 
 function updateGdpHeader() {
-  document.getElementById('gdp-th-text').textContent = 'Index T+' + postWindow;
+  document.getElementById('gdp-th-text').textContent = 'Index +' + postWindow + 'yr';
 }
 
 function onSlider(v) {
@@ -1067,6 +1052,6 @@ window.addEventListener('resize', () => {
 });
 </script>
 
-<div id="tooltip" style="display:none;position:fixed;background:#1a1a1a;color:#fafaf8;font-family:'Courier New',Courier,monospace;font-size:11px;padding:5px 9px;border-radius:2px;pointer-events:none;z-index:100;white-space:nowrap;"></div>
+<div id="tooltip" style="display:none;position:fixed;background:#1a1a1a;color:#fafaf8;font-family:var(--mono);font-size:11px;padding:5px 9px;border-radius:2px;pointer-events:none;z-index:100;white-space:nowrap;"></div>
 </body>
 </html>
