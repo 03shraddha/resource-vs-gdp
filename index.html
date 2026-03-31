@@ -914,6 +914,11 @@ function renderTable() {
     if (k === sortKey) th.classList.add(sortDir === -1 ? 'sorted-desc' : 'sorted-asc');
   });
 
+  const hasPost  = rows.some(r => r.post  !== null);
+  const hasIndex = rows.some(r => r.gdp30 !== null);
+  document.querySelector('#data-table th[onclick="sortBy(\'post\')"]').style.display = hasPost  ? '' : 'none';
+  document.getElementById('gdp-th').style.display = hasIndex ? '' : 'none';
+
   const tbody = document.getElementById('table-body');
   tbody.innerHTML = '';
   for (const r of rows) {
@@ -928,8 +933,8 @@ function renderTable() {
       <td><span class="res-tag">${r.resource}</span></td>
       <td>${r.t0}</td>
       <td>${preStr}</td>
-      <td>${fmtPct(r.post)}</td>
-      <td>${r.gdp30 !== null ? r.gdp30.toFixed(1) : '--'}</td>
+      ${hasPost  ? `<td>${fmtPct(r.post)}</td>` : ''}
+      ${hasIndex ? `<td>${r.gdp30 !== null ? r.gdp30.toFixed(1) : '--'}</td>` : ''}
     `;
     tr.onclick = () => toggleSpotlight(r.name, r.note);
     tbody.appendChild(tr);
