@@ -209,7 +209,9 @@ tr.spotlight-row td { background: #f0eeea; }
   html { font-size: 20px; } /* scale all rem values up for mobile */
   body { padding: 16px 14px 40px; font-size: 15px; }
   h1 { font-size: 1.3rem; }
-  .subtitle { word-break: break-word; }
+  .subtitle { display: flex; flex-wrap: wrap; gap: 2px 0; }
+  .sub-sep { display: none; }
+  .sub-item::after { content: ''; display: block; }
   .controls { gap: 8px; }
   .filter-group { flex-wrap: wrap; }
   .filter-group[style*="margin-left:12px"] { margin-left: 0 !important; }
@@ -227,7 +229,7 @@ tr.spotlight-row td { background: #f0eeea; }
 <body>
 
 <h1>Resource Extraction and GDP per Capita Trajectories</h1>
-<p class="subtitle">GDP/pc indexed to 100 at extraction start (T=0) &nbsp;|&nbsp; Event time T-20 to T+60 &nbsp;|&nbsp; Maddison 2023 + World Bank WDI &nbsp;|&nbsp; 28 countries</p>
+<p class="subtitle"><span class="sub-item">GDP/pc indexed to 100 at extraction start (T=0)</span><span class="sub-sep"> | </span><span class="sub-item">Event time T-20 to T+60</span><span class="sub-sep"> | </span><span class="sub-item">Maddison 2023 + World Bank WDI</span><span class="sub-sep"> | </span><span class="sub-item">28 countries</span></p>
 
 <div class="controls">
   <div class="filter-group">
@@ -394,7 +396,7 @@ const RAW = [
     note:"Oil was discovered in 1996 and GDP/pc exploded 40x on paper within a decade. In practice the president's son bought a $35M Malibu mansion -- most people still live on under $2 a day." },
   { name:'Saudi Arabia',      t0:1938, resource:'oil',
     wpts:[[-20,28],[-10,52],[0,100],[5,168],[10,295],[15,460],[20,580],[25,490],[30,415],[35,480],[40,535],[45,520],[50,480],[55,460],[60,440]],
-    note:"When oil was struck in 1938, Saudi Arabia was basically an empty desert with a king and no cash. One family controlled everything, so all petrodollars went into one budget -- they built modern cities from scratch in under 40 years." },
+    note:"Saudi Arabia's trajectory shows a near-perfect boom-bust-recovery cycle. GDP nearly 6x'd by T+20 (1958) as Aramco royalties poured in -- the fastest early rise of any non-Gulf state in the dataset. Then it drops: Arab nationalism, the Suez crisis, and a renegotiation of oil terms caused a real dip to 415 by T+30. The 1973 embargo pushed it back up to 535 at T+40. By T+60 the index sits at 440 -- still 4.4x from baseline, but well below peak. One family controlled the spigot the entire time, which is why money moved fast but institutions stayed weak. Vision 2030 is the acknowledgement that staying an oil economy is no longer viable." },
   { name:'Venezuela',         t0:1920, resource:'oil',
     wpts:[[-20,58],[-10,77],[0,100],[5,150],[10,218],[15,285],[20,338],[25,375],[30,390],[35,352],[40,290],[45,240],[50,155],[55,90],[60,68]],
     note:"Venezuela was South America's richest country by the 1950s, all on oil. Then came a government that nationalized everything, printed money to give it away for free, and discovered you can't do that forever -- now people are leaving by the millions." },
@@ -433,10 +435,10 @@ const RAW = [
     note:"Iran's oil was discovered by a British company that paid Iran almost nothing, which became so humiliating that Iran nationalized it in 1951. Britain and the US then organized a coup against the prime minister who did it -- Iranian oil is basically the plot of the entire 20th century Middle East." },
   { name:'Iraq',              t0:1934, resource:'oil',
     wpts:[[-20,52],[-10,73],[0,100],[5,132],[10,168],[15,215],[20,272],[25,292],[30,262],[35,312],[40,342],[45,355],[50,368],[55,375],[60,380]],
-    note:"Iraq has the world's fifth-largest proven oil reserves and has been in some form of war, sanctions, or political chaos for 50 years straight. Oil doesn't cause wars but it absolutely makes them worse and longer -- every outside power in Iraq was, at some level, thinking about the oil." },
+    note:"Iraq's chart covers the 1958 monarchy collapse, two Ba'ath coups, the Iran-Iraq war, Gulf War I, and UN sanctions -- and still ends at index 380 by T+60. The dip to 262 at T+30 (mid-1960s) reflects the post-monarchy chaos; the recovery after T+35 tracks the 1970s oil boom under Ba'ath stability. What the chart can't show: how much higher this would be without 50 years of war. Iraq has the world's fifth-largest proven reserves and one of the lowest GDP/person-per-barrel ratios in the dataset -- the gap between what the ground holds and what citizens have is almost entirely explained by conflict and kleptocracy." },
   { name:'Oman',              t0:1967, resource:'oil',
     wpts:[[-20,14],[-10,38],[0,100],[3,280],[5,305],[10,558],[15,625],[20,655],[25,672],[30,682],[35,692],[40,702],[45,705],[50,698],[55,685],[60,672]],
-    note:"Oman's Sultan Qaboos took power in 1970, kicked out his father who had literally banned books and glasses, and used oil money to build a country from scratch in one generation. It's a genuine success story nobody talks about because there's no conflict to write about." },
+    note:"Oman's first 10 years post-extraction are the steepest rise in the dataset: index 100 to 558 in a decade. That's not just oil -- that's Sultan Qaboos staging a palace coup in 1970 against a father who had literally banned glasses and books, then immediately spending oil revenue on roads, hospitals, and schools in a country that had almost none. The plateau after T+30 (index 682-705) is the other remarkable thing: no boom-bust cycle. When oil prices crashed in 1986, Oman didn't crater like Gulf neighbors did. Early diversification into LNG, tourism, and port logistics held the floor. Same tier as UAE by T+30, never mentioned in any textbook." },
   { name:'Trinidad & Tobago', t0:1908, resource:'oil',
     wpts:[[-20,64],[-10,80],[0,100],[5,116],[10,134],[15,150],[20,162],[25,180],[30,196],[35,218],[40,242],[45,248],[50,242],[55,235],[60,228]],
     note:"T&T has been pumping oil since the early 1900s and used it to maintain the Caribbean's highest per-capita income for most of the 20th century. Being a small island helps: oil money actually reaches people when there are fewer people to reach." },
