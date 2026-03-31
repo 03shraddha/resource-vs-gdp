@@ -266,6 +266,49 @@ tr.spotlight-row td { background: #f0eeea; }
   </div>
 </div>
 
+<div id="how-to" style="margin-top:28px;border-top:1px solid var(--border);padding-top:18px;">
+  <div style="display:flex;gap:6px;align-items:center;margin-bottom:12px;cursor:pointer;user-select:none;" onclick="toggleGuide()">
+    <span style="font-family:var(--mono);font-size:0.68rem;letter-spacing:0.06em;color:var(--muted);text-transform:uppercase;">How to read this</span>
+    <span id="guide-toggle" style="font-family:var(--mono);font-size:0.68rem;color:var(--muted);">▾</span>
+  </div>
+  <div id="guide-body" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px 28px;">
+    <div>
+      <div style="font-family:var(--mono);font-size:0.66rem;letter-spacing:0.07em;color:var(--text);margin-bottom:5px;text-transform:uppercase;">What is T=0?</div>
+      <p style="font-size:0.78rem;line-height:1.65;color:#444;">T=0 is the year a country started <em>significant</em> resource extraction — when oil wells or mines went from experimental to actually producing real revenue. Every line in the chart is indexed to <strong>100</strong> at that year, so you're comparing trajectories, not absolute wealth. A country sitting at 200 at T+20 doubled its income per person in 20 years; one at 80 got poorer.</p>
+    </div>
+    <div>
+      <div style="font-family:var(--mono);font-size:0.66rem;letter-spacing:0.07em;color:var(--text);margin-bottom:5px;text-transform:uppercase;">Reading the chart</div>
+      <p style="font-size:0.78rem;line-height:1.65;color:#444;">The <strong>x-axis</strong> is years since extraction started, not calendar years — so Norway (1971) and Nigeria (1958) can be compared side by side. The <strong>shaded band</strong> around T=0 is the ±5-year transition window. <strong>Dashed lines</strong> are pre-1990 estimates spliced from the Maddison Project; treat them as directionally correct but not precise. The dotted vertical line moves with the slider to show your chosen endpoint.</p>
+    </div>
+    <div>
+      <div style="font-family:var(--mono);font-size:0.66rem;letter-spacing:0.07em;color:var(--text);margin-bottom:5px;text-transform:uppercase;">Controls</div>
+      <p style="font-size:0.78rem;line-height:1.65;color:#444;"><strong>Slider</strong> (bottom-left of chart) moves the "After" endpoint from T+10 to T+60 — drag it to see how rankings shift over time. <strong>T−5 / T+5</strong> buttons shift the extraction start date ±5 years to check if findings are sensitive to that choice. <strong>Contrast</strong> isolates the sharpest divergence pairs. <strong>Click</strong> a legend dot to hide/show a country; <strong>double-click</strong> to isolate it solo. <strong>Click any table row</strong> to read the country's story.</p>
+    </div>
+    <div>
+      <div style="font-family:var(--mono);font-size:0.66rem;letter-spacing:0.07em;color:var(--text);margin-bottom:5px;text-transform:uppercase;">The numbers</div>
+      <p style="font-size:0.78rem;line-height:1.65;color:#444;"><strong>Before / After</strong> are average annual growth rates in the 10 years before and N years after T=0. <strong>Index</strong> is just GDP/person at the slider year relative to T=0 — no fancy math, just a ratio. The <span style="color:#c8860a;font-size:0.8em;">⚠</span> flag means GDP per capita is likely a poor welfare proxy: oil revenues were so concentrated at the top that the average tells you almost nothing about how ordinary people lived.</p>
+    </div>
+    <div>
+      <div style="font-family:var(--mono);font-size:0.66rem;letter-spacing:0.07em;color:var(--text);margin-bottom:5px;text-transform:uppercase;">Data sources</div>
+      <p style="font-size:0.78rem;line-height:1.65;color:#444;"><strong>Post-1990 GDP/pc</strong>: World Bank WDI indicator NY.GDP.PCAP.PP.KD (constant 2021 PPP $). <strong>Pre-1990 backfill</strong>: Maddison Project Database 2023 growth rates spliced to the WB anchor. <strong>T=0 dates</strong>: manually set to the first year of commercially significant extraction, not discovery. 28 countries across oil, natural gas, diamonds, copper, and phosphate.</p>
+    </div>
+    <div>
+      <div style="font-family:var(--mono);font-size:0.66rem;letter-spacing:0.07em;color:var(--text);margin-bottom:5px;text-transform:uppercase;">Caveats worth knowing</div>
+      <p style="font-size:0.78rem;line-height:1.65;color:#444;">Some T=0 dates (Indonesia 1885, Malaysia 1910) rely heavily on colonial-era Maddison estimates — treat the dashed lines as rough. Nauru and early DRC data are sparse enough that the exact shape is uncertain. The T=0 sensitivity buttons let you stress-test the single biggest assumption: whether extraction start dates are right.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+function toggleGuide() {
+  const body = document.getElementById('guide-body');
+  const tog  = document.getElementById('guide-toggle');
+  const open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : 'grid';
+  tog.textContent = open ? '▸' : '▾';
+}
+</script>
+
 <script>
 // ---------------------------------------------------------------------------
 // Helpers
