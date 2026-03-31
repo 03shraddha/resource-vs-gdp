@@ -1,10 +1,25 @@
-# resource vs gdp
+# resource vs gdp &nbsp; [→ open the chart](https://03shraddha.github.io/resource-vs-gdp/)
 
 what happens to a country's economy after it strikes oil, diamonds, or copper? does it get rich? does it stay rich? does it get worse?
 
 this is an interactive chart of 28 countries, tracking gdp per person from 20 years *before* extraction started to 60 years *after*. every line starts at 100 so you can compare trajectories instead of absolute wealth — norway in 1971 and nigeria in 1958 plotted on the same scale.
 
-**→ [open the chart](https://03shraddha.github.io/resource-vs-gdp/)**
+## 10 counterintuitive findings
+
+| # | finding | why it's surprising | countries | index at t+30 |
+|---|---------|---------------------------------------|-----------|--------------|
+| 1 | **uae beat norway by 2.6x** despite having no democratic institutions | theory says you need rule of law to turn oil into growth. uae has neither elections nor transparency — and still won | UAE vs Norway | 752 vs 284 |
+| 2 | **venezuela is poorer now than before oil** | a century of extraction left the average venezuelan worse off in real terms than when the first well was drilled | Venezuela | 68 at t+60 (started at 100) |
+| 3 | **nauru went from richest to nearly nothing** in 30 years — no war, no sanctions | they spent every cent on a national airline that flew empty routes, a west end musical that bombed, and advisors who stole the rest | Nauru | 756 → 38 by t+60 |
+| 4 | **libya had the steepest 10-year rise in the dataset** — starting as the poorest country in africa | in 1960 libya was poorer than most of sub-saharan africa. by 1970 it had one of the highest per-capita incomes on earth | Libya | 590 at t+10 |
+| 5 | **the world bank built chad a special pipeline with international monitors** — it failed completely | chad changed the law, spent the money on weapons, and the world bank pulled out. t+30 index: 112 | Chad | 112 |
+| 6 | **botswana (552) vs drc (92, falling)** — same resource type, same continent, same starting poverty | the drc sits on ~$24 trillion in minerals and is still one of the world's poorest countries. botswana negotiated fair terms with de beers and built institutions | Botswana vs DRC | 552 vs 92 |
+| 7 | **angola's gdp fell to 54 at t+10 while oil was flowing the whole time** | oil money funded both sides of a 27-year civil war. extraction + active conflict = worse than no extraction | Angola | drops to 54, recovers to 162 |
+| 8 | **indonesia: 100+ years of oil, barely moved** | after 30 years past t=0, indonesia's index is 126 — less than bolivia, which is landlocked and had its industry nationalized | Indonesia vs Bolivia | 126 vs 132 |
+| 9 | **equatorial guinea's index hit 650 — most citizens still live on under $2/day** | gdp per capita is an average. when one family takes almost all the oil money, the average looks great while nothing reaches ordinary people | Equatorial Guinea | 650 (⚠ welfare proxy) |
+| 10 | **oman banned glasses and books until 1970, then built a functional modern state in one generation** | sultan qaboos took power in 1970 in one of the most isolated countries on earth and used oil revenue to build schools, roads, and hospitals from scratch. index 682 at t+30 — same tier as uae, never mentioned in textbooks | Oman | 682 |
+
+**the single most theoretically interesting comparison: botswana vs drc.** same resource type (minerals), same continent, both starting from extreme poverty with a colonial extractive history. the only meaningful difference is what the government chose to do with the money. outcome gap: 6x. no other pair in the dataset has such similar starting conditions and such a clean divergence.
 
 ---
 
@@ -60,25 +75,6 @@ note: `analyze.py` requires the maddison 2023 excel file (the dataverse download
 **oil:** norway, nigeria, equatorial guinea, saudi arabia, venezuela, angola, indonesia, malaysia, uae, kazakhstan, ghana, chad, libya, algeria, ecuador, iran, iraq, oman, trinidad & tobago, azerbaijan, colombia, bolivia
 
 **minerals:** botswana (diamonds), zambia (copper), drc (cobalt/coltan), chile (copper), sierra leone (diamonds), nauru (phosphate)
-
----
-
-## 10 counterintuitive findings
-
-| # | finding | the "wait, that makes no sense" moment | countries | index at t+30 |
-|---|---------|---------------------------------------|-----------|--------------|
-| 1 | **uae beat norway by 2.6x** despite having no democratic institutions | theory says you need rule of law to turn oil into growth. uae has neither elections nor transparency — and still won | UAE vs Norway | 752 vs 284 |
-| 2 | **venezuela is poorer now than before oil** | a century of extraction left the average venezuelan worse off in real terms than when the first well was drilled | Venezuela | 68 at t+60 (started at 100) |
-| 3 | **nauru went from richest to nearly nothing** in 30 years — no war, no sanctions | they spent every cent on a national airline that flew empty routes, a west end musical that bombed, and advisors who stole the rest | Nauru | 756 → 38 by t+60 |
-| 4 | **libya had the steepest 10-year rise in the dataset** — starting as the poorest country in africa | in 1960 libya was poorer than most of sub-saharan africa. by 1970 it had one of the highest per-capita incomes on earth | Libya | 590 at t+10 |
-| 5 | **the world bank built chad a special pipeline with international monitors** — it failed completely | chad changed the law, spent the money on weapons, and the world bank pulled out. t+30 index: 112 | Chad | 112 |
-| 6 | **botswana (552) vs drc (92, falling)** — same resource type, same continent, same starting poverty | the drc sits on ~$24 trillion in minerals and is still one of the world's poorest countries. botswana negotiated fair terms with de beers and built institutions | Botswana vs DRC | 552 vs 92 |
-| 7 | **angola's gdp fell to 54 at t+10 while oil was flowing the whole time** | oil money funded both sides of a 27-year civil war. extraction + active conflict = worse than no extraction | Angola | drops to 54, recovers to 162 |
-| 8 | **indonesia: 100+ years of oil, barely moved** | after 30 years past t=0, indonesia's index is 126 — less than bolivia, which is landlocked and had its industry nationalized | Indonesia vs Bolivia | 126 vs 132 |
-| 9 | **equatorial guinea's index hit 650 — most citizens still live on under $2/day** | gdp per capita is an average. when one family takes almost all the oil money, the average looks great while nothing reaches ordinary people | Equatorial Guinea | 650 (⚠ welfare proxy) |
-| 10 | **oman banned glasses and books until 1970, then built a functional modern state in one generation** | sultan qaboos took power in 1970 in one of the most isolated countries on earth and used oil revenue to build schools, roads, and hospitals from scratch. index 682 at t+30 — same tier as uae, never mentioned in textbooks | Oman | 682 |
-
-**the single most theoretically interesting comparison: botswana vs drc.** same resource type (minerals), same continent, both starting from extreme poverty with a colonial extractive history. the only meaningful difference is what the government chose to do with the money. outcome gap: 6x. no other pair in the dataset has such similar starting conditions and such a clean divergence.
 
 ---
 
