@@ -259,17 +259,17 @@ tr.spotlight-row td { background: #f0eeea; }
       <thead>
         <tr>
           <th onclick="sortBy('name')">Country</th>
-          <th onclick="sortBy('t0')">Extraction<br>Start</th>
-          <th onclick="sortBy('post')" title="Avg annual GDP/person growth from extraction start to the slider year">Avg<br>Growth/yr</th>
-          <th id="gdp-th" onclick="sortBy('gdp30')" title="GDP per person indexed to 100 at extraction start"><span id="gdp-th-text">Index T+30</span></th>
+          <th onclick="sortBy('t0')" title="Year significant extraction began">Start Year</th>
+          <th onclick="sortBy('post')" title="Avg annual GDP/person growth from extraction start to the slider year">Growth/yr</th>
+          <th id="gdp-th" onclick="sortBy('gdp30')" title="GDP per person indexed to 100 at extraction start"><span id="gdp-th-text">GDP Index</span></th>
         </tr>
       </thead>
       <tbody id="table-body"></tbody>
     </table>
     <div style="margin-top:10px;font-family:var(--mono);font-size:0.72rem;color:#888;line-height:1.7;border-top:1px solid var(--border);padding-top:8px;">
-      <strong style="color:#555;">Extraction Start</strong> — year significant extraction began<br>
-      <strong style="color:#555;">Avg Growth/yr</strong> — avg annual GDP/person growth from extraction start to the slider year<br>
-      <strong style="color:#555;">Index</strong> — GDP/person at the slider year, where 100 = the extraction start year<br>
+      <strong style="color:#555;">Start Year</strong> — year significant extraction began<br>
+      <strong style="color:#555;">Growth/yr</strong> — avg annual GDP/person growth from extraction start to the slider year<br>
+      <strong style="color:#555;">GDP Index</strong> — GDP/person at the slider year, where 100 = the extraction start year<br>
       <span style="color:#aaa;">Drag the slider to move the "After" endpoint and watch trajectories change.</span>
     </div>
   </div>
@@ -304,8 +304,8 @@ tr.spotlight-row td { background: #f0eeea; }
     <div class="guide-cell" style="padding-left:24px;padding-right:24px;border-left:1px solid var(--border);">
       <div style="font-family:var(--mono);font-size:0.68rem;letter-spacing:0.08em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;">The numbers</div>
       <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;">
-        <li style="font-size:0.78rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><strong>Avg Growth/yr</strong> = avg annual GDP/person growth from extraction start to the slider year</li>
-        <li style="font-size:0.78rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><strong>Index</strong> = GDP/person at slider year ÷ GDP/person at start year × 100. No fancy math.</li>
+        <li style="font-size:0.78rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><strong>Growth/yr</strong> = avg annual GDP/person growth from extraction start to the slider year</li>
+        <li style="font-size:0.78rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><strong>GDP Index</strong> = GDP/person at slider year ÷ GDP/person at start year × 100. No fancy math.</li>
         <li style="font-size:0.78rem;color:#333;line-height:1.45;"><span style="color:var(--muted);margin-right:4px;">→</span><span style="color:#c8860a;">⚠</span> flag = oil revenues so concentrated at top that the average says nothing about how people lived</li>
       </ul>
     </div>
@@ -970,7 +970,7 @@ function setFilter(f) {
 }
 
 function updateGdpHeader() {
-  document.getElementById('gdp-th-text').textContent = 'Index +' + postWindow + 'yr';
+  document.getElementById('gdp-th-text').textContent = 'GDP Index';
 }
 
 function onSlider(v) {
