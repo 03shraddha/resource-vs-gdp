@@ -141,7 +141,7 @@ th {
   white-space: nowrap;
   user-select: none;
 }
-th:first-child, th:nth-child(2) { text-align: left; }
+th:first-child { text-align: left; }
 th.sorted-asc::after { content: ' ^'; }
 th.sorted-desc::after { content: ' v'; }
 td {
@@ -153,7 +153,6 @@ td {
   white-space: nowrap;
 }
 td:first-child { text-align: left; }
-td:nth-child(2) { text-align: left; color: var(--muted); }
 #data-table th:first-child,
 #data-table td:first-child { min-width: 120px; }
 tr { cursor: pointer; transition: background 0.1s; }
@@ -219,8 +218,6 @@ tr.spotlight-row td { background: #f0eeea; }
   #table-panel { width: 100%; min-width: 0; max-height: none; overflow-x: auto; }
   #slider-row { padding-right: 0 !important; justify-content: flex-start !important; }
   #post-slider { width: 100% !important; max-width: 200px; }
-  /* hide Type column on mobile — filter buttons already show the type */
-  #data-table th:nth-child(2), #data-table td:nth-child(2) { display: none; }
   .guide-grid { grid-template-columns: 1fr !important; }
   .guide-cell { border-left: none !important; padding-left: 0 !important; border-top: 1px solid var(--border); padding-top: 12px; }
   .guide-cell:first-child { border-top: none; padding-top: 0; }
@@ -262,9 +259,7 @@ tr.spotlight-row td { background: #f0eeea; }
       <thead>
         <tr>
           <th onclick="sortBy('name')">Country</th>
-          <th onclick="sortBy('resource')">Type</th>
           <th onclick="sortBy('t0')">Year</th>
-          <th onclick="sortBy('pre')" title="Avg annual GDP/person growth in the 10 yrs before extraction started">Before</th>
           <th onclick="sortBy('post')" title="Avg annual GDP/person growth from extraction start to the slider year">After</th>
           <th id="gdp-th" onclick="sortBy('gdp30')" title="GDP per person indexed to 100 at extraction start"><span id="gdp-th-text">Index T+30</span></th>
         </tr>
@@ -273,7 +268,6 @@ tr.spotlight-row td { background: #f0eeea; }
     </table>
     <div style="margin-top:10px;font-family:var(--mono);font-size:0.72rem;color:#888;line-height:1.7;border-top:1px solid var(--border);padding-top:8px;">
       <strong style="color:#555;">Year</strong> — when significant extraction started<br>
-      <strong style="color:#555;">Before</strong> — avg annual GDP/person growth in the 10 yrs before extraction<br>
       <strong style="color:#555;">After</strong> — avg annual GDP/person growth from extraction start to the slider year<br>
       <strong style="color:#555;">Index</strong> — GDP/person at the slider year, where 100 = the extraction start year<br>
       <span style="color:#aaa;">Drag the slider to move the "After" endpoint and watch trajectories change.</span>
@@ -926,9 +920,7 @@ function renderTable() {
       : '--';
     tr.innerHTML = `
       <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${r.color};margin-right:5px;vertical-align:middle"></span>${r.name}${INEQUALITY_FLAGS.has(r.name) ? ' <span title="GDP/capita may not reflect living standards — oil revenues concentrated at top" style="color:#c8860a;font-size:0.60rem;cursor:default">⚠</span>' : ''}</td>
-      <td><span class="res-tag">${r.resource}</span></td>
       <td>${r.t0}</td>
-      <td>${preStr}</td>
       ${hasPost  ? `<td>${fmtPct(r.post)}</td>` : ''}
       ${hasIndex ? `<td>${r.gdp30 !== null ? r.gdp30.toFixed(1) : '--'}</td>` : ''}
     `;
